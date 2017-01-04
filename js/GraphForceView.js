@@ -581,38 +581,47 @@
 
 			highlight: function(d, answer, give) {
 				var self = this;
-			
-				//self.highlights = self.layout.getAdjacentNodes(d, 0);
 				var allHighlights = self.parentBubble.getNodeSelection();
 				for(var k in allHighlights)
-				//for(var k in self.highlights)
 				{
-					if(!self.highlights[k])
+					if(!self.highlights[k]){
 						self.highlights[k] = self.index;
+					}
 				}
-
-				if(d.layoutId in self.lowlights){
-					delete self.lowlights[d.layoutId];
+				//If there is an answer
+				if(answer){
+					//If it's highlighted and it's not an answer...
+					if ((d.layoutId in self.highlights) && !(d.layoutId in answer) )
+					{
+						delete self.highlights[d.layoutId];
+						self.parentBubble.deleteNodeSelection(d.layoutId);
+					}
+					else{
+						//If it's not highlighted then it's not on this list... must be an answer
+						self.highlights[d.layoutId] = 1;
+					}
 				}
-				else if( ((d.layoutId in self.highlights) && !answer) ) {
-					delete self.highlights[d.layoutId];
-					self.parentBubble.deleteNodeSelection(d.layoutId);
+				else{
+					//Switch the node
+					if( d.layoutId in self.highlights ) {
+						//If it's highlighted, switch it off
+						delete self.highlights[d.layoutId];
+						self.parentBubble.deleteNodeSelection(d.layoutId);
+					}
+					else{
+						//Overwise, switch it on
+						self.highlights[d.layoutId] = 1;
+					}
 				}
-				else if ((d.layoutId in self.highlights) && !(d.layoutId in answer) )
-				{
-					self.lowlights[d.layoutId] = 1; 
-					delete self.highlights[d.layoutId];
-					self.parentBubble.deleteNodeSelection(d.layoutId);
-				}
-				else
-					self.highlights[d.layoutId] = 1;
-
+				
+				
 				self.parentBubble.setNodeSelection(self.highlights);
 
 				self.updateNodes(self.nodes);
 				//self.updateLinks2(self.links, d);
 				//self.layout.updateDisplay();
 			},
+
 
 			inGraph: function(node) {
 				if (!this.graph && !this.graphs) {return true;}
@@ -639,18 +648,23 @@
 			},
 			giveAnswer: function(answer)
 			{
-				console.log(answer);
+				//console.log(answer);
 				var self = this;
+				
+				//Run it twice to cleanup the second graph
 				self.entities.proteins.each(function(e, eid){
-					if(answer[e.layoutId] || self.highlights[e.layoutId])
+					if(answer[e.layoutId] || self.highlights[e.layoutId]){
 						self.highlight(e, answer);
+					}
 				});
 				var qType = self.parentBubble.getQtype();
 				if(qType === 103)
 				{
+					console.log("Chicken2");
 					listBox.giveAnswer(answer);
 				}
 				pre_state = true;
+				
 				for(var k in scaleboxes)
 					{
 						var s = scaleboxes[k];
@@ -2078,6 +2092,7 @@
 		{
 
 			cbutton.on("click", function() { 
+			content.parent.giveAnswer();
 			content.parent.giveAnswer();
 			});
 		}
