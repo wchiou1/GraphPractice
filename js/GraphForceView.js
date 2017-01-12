@@ -1088,12 +1088,12 @@
 	$P.GraphForceView.makeLegend = function(content, parentSelection, width, height, viewID, timeoutEvent) {
 			var answerReady = content.parent.getAnswerReady();
 	//  Question pool:
-		var practice_questions = [ ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other. ',  // soup
-								   ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.',  // soup
-								   ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.',  // sm
-								   ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.',  // sm
-								   ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.',  // mirror
-								   ' For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.',  // mirror
+		var practice_questions = [ ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup
+								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // soup
+								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
+								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
+								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
+								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
 								  // ' Which graph does not contain node "X"?',  // mirror
 									/*
 								   ' Which node(s) exist in one graph but not the other? ',   // soup
@@ -1114,7 +1114,7 @@
 								  // ' Which of the group "X" nodes is/are connected to 4 or more nodes in all graphs?',  // mirror
 									];
 
-		var questions = ['For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other. ',  // soup - small data (20 nodes) 0
+		var questions = ['For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup - small data (20 nodes) 0
 						 //'Mark all the node(s) that exist in one graph but not the other. ',   // soup  9  --> 18
 						 'Estimate the number of node differences between the two graphs.'
 						 ];
@@ -1247,13 +1247,24 @@
 				.attr('y', 40)
 				.attr('dominant-baseline', 'middle')
 				.text('Task ' + Math.ceil(i/6)  + ': ');
-
-			 quest.append('tspan')
+			var lines = practice_questions[i-1].split('\n');
+			quest.append('tspan')
+				.attr('dx','10')
 				.style('font-size', '16px')
 				.style('font-weight', 'normal')
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
-				.text(practice_questions[i-1]);
+				.text(lines[0]);
+				
+			quest.append('tspan')
+				.attr('x', '92')
+				.attr('dy', '20')
+				.style('font-size', '16px')
+				.style('font-weight', 'normal')
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text(lines[1]);
+
 
 			if (i === 1 || i === 2 || i === 7 || i === 8)
 			{
@@ -1314,13 +1325,23 @@
 				.attr('y', 40)
 				.attr('dominant-baseline', 'middle')
 				.text('Task ' + qlabel + ': ');
-
-			 quest.append('tspan')
+			var lines = questions[Qindex].split('\n');
+			quest.append('tspan')
+				.attr('dx', '10')
 				.style('font-size', '16px')
 				.style('font-weight', 'normal')
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
-				.text(questions[Qindex]);   // global question ID
+				.text(lines[0]);   // global question ID
+				
+			quest.append('tspan')
+				.attr('x', '20')
+				.attr('dy', '15')
+				.style('font-size', '16px')
+				.style('font-weight', 'normal')
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text(lines[1]);   // global question ID
 			return quest;
 		}
 
@@ -1749,7 +1770,7 @@
 
 			     	}
 			     else
-			     	content.hideGraph('Click \'Start\' when ready', 'Task 1:  For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.');
+			     	content.hideGraph('Click \'Start\' when ready', 'Task 1:  For the subnetwork containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 			     }
 
 		///////////////////////////////////////////////////////////////////////////////////////////
