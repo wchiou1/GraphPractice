@@ -434,7 +434,9 @@
 
 
              },
-             printSelection: function() {console.log(this.nodeSelection);},
+             printSelection: function() {
+				 console.log(this.nodeSelection);
+			},
              getQcount: function() {return this.qCount; },
              getPcount: function() {return this.pCount; },
              resetPCount: function() { this.pCount--; },

@@ -600,24 +600,48 @@
 						//If it's not highlighted then it's not on this list... must be an answer
 						self.highlights[d.layoutId] = 1;
 					}
+					self.parentBubble.setNodeSelection(self.highlights);
+
+					self.updateNodes(self.nodes);
 				}
 				else{
-					//Switch the node
-					if( d.layoutId in self.highlights ) {
-						//If it's highlighted, switch it off
-						delete self.highlights[d.layoutId];
-						self.parentBubble.deleteNodeSelection(d.layoutId);
-					}
-					else{
-						//Overwise, switch it on
+					var selection = self.nodes;
+					var highlightCount = 0;
+					//Get the highlight count first
+					selection.each(function(dd, i) {
+						if (!dd) {return;}
+						if (dd.layoutId != d.layoutId) {return;}
+
+						var selection = d3.select(this);
+						if ('entity' === dd.klass || 'reaction' === dd.klass) {
+							if (dd.displays) {
+								dd.displays.forEach(function(display) {
+									if((!isNaN(display.highlighted)&&display.viewID !== self.index)||(isNaN(display.highlighted)&&display.viewID === self.index)){
+										highlightCount = highlightCount + 1;
+									}
+									});
+								}
+							}
+					});
+					//If there are any nodes active, switch it on
+					if(highlightCount>0){
+						//switch it on
 						self.highlights[d.layoutId] = 1;
 					}
+					else{//All nodes inactive, turn it off
+						if( d.layoutId in self.highlights ) {
+							//If it's highlighted, switch it off
+							delete self.highlights[d.layoutId];
+							self.parentBubble.deleteNodeSelection(d.layoutId);
+						}
+					}
+					self.parentBubble.setNodeSelection(self.highlights);
+
+					self.updateSingleNode(self.nodes,d.layoutId);
 				}
 				
 				
-				self.parentBubble.setNodeSelection(self.highlights);
-
-				self.updateNodes(self.nodes);
+				
 				//self.updateLinks2(self.links, d);
 				//self.layout.updateDisplay();
 			},
@@ -829,7 +853,6 @@
 					if (!d) {return;}
 
 					var selection = d3.select(this);
-
 					if ('entity' === d.klass || 'reaction' === d.klass) {
 						var highlights = self.highlights[d.layoutId];
 						var lowlights = self.lowlights[d.layoutId];
@@ -845,7 +868,42 @@
 						}
 
 					if ('location' === d.klass) {
-						selection.attr('stroke-width', self.display.collapsedLocations[d.id] ? 5 : 1);}});
+						selection.attr('stroke-width', self.display.collapsedLocations[d.id] ? 5 : 1);}
+				});
+
+			},
+			
+			updateSingleNode: function(selection,id) {
+				var self = this;
+
+				selection.style('display', function(d, i) {
+					return self.isNodeVisible(d, this) ? '' : 'none';});
+
+				selection.each(function(d, i) {
+					if (!d) {return;}
+					if (d.layoutId != id) {return;}
+
+					var selection = d3.select(this);
+					if ('entity' === d.klass || 'reaction' === d.klass) {
+						var highlights = self.highlights[d.layoutId];
+						d.highlighted = highlights + 1;
+						if (d.displays) {
+							d.displays.forEach(function(display) {
+								if(display.viewID === self.index){
+									if(isNaN(display.highlighted))
+										display.highlighted = 2;
+									
+									else
+										display.highlighted = undefined + 1;
+									
+								}
+								});
+							}
+						}
+
+					if ('location' === d.klass) {
+						selection.attr('stroke-width', self.display.collapsedLocations[d.id] ? 5 : 1);}
+				});
 
 			},
 
@@ -1007,6 +1065,9 @@
 		var but_state = false;
 		var but_color = 'red';
 		var but_rect;
+		var bbut_state = false;
+		var bbut_color = 'red';
+		var bbut_rect;
 
 		var scaleboxes = {};
 		var listBox;
@@ -1169,6 +1230,7 @@
 		 {
 		 	curQ = displayNone(); 
 		 	but_color = 'green';
+			bbut_color = 'green';
 		 }
 		 	
 
@@ -1194,18 +1256,23 @@
 			.attr('x1', sep2).attr('y1', 0)
 			.attr('x2', sep2).attr('y2', height);
 
-
+		var b_offset = -40;
+		var bb_offset = 95;
 		var button = legend.append('g')
 					.attr('id', 'button');
-
+		var back_button = legend.append('g')
+					.attr('id', 'back_button');
+		
 		var conceal;
 		if(timeoutEvent)
 		{
 			but_color = 'red';
 			but_state = false;
+			bbut_color = 'green';
+			bbut_state = true;
 		}
-		 but_rect = button.append('rect')
-				.attr('x', sep2 +  width*0.33 / 4 - 75)
+		but_rect = button.append('rect')
+				.attr('x', sep2 +  width*0.33 / 4 - 75 + b_offset)
 				.attr('y', height/2 - 30)
 				.attr('rx', 4)
 				.attr('ry', 4)
@@ -1214,7 +1281,22 @@
 				.attr('stroke-width', 1)
 				.attr('stroke', but_color)
 				.attr('fill', '#ddd');
-
+		bbut_rect = back_button.append('rect')
+				.attr('x', sep2 +  width*0.33 / 4 - 75 + bb_offset)
+				.attr('y', height/2 - 30)
+				.attr('rx', 4)
+				.attr('ry', 4)
+				.attr('width', 130)
+				.attr('height', 35)
+				.attr('stroke-width', 1)
+				.attr('stroke', bbut_color)
+				.attr('fill', '#ddd');
+		var bbut_text = back_button.append('text')
+				.style('font-size', '16px')
+		  		.attr('fill', 'black')
+		  		.attr('x', sep2 +  width*0.33 / 4 - 35 + bb_offset)
+		  		.attr('y', height/2 - 8  )
+		  		.text('Reset');
 		var qType = content.parent.getQtype();
 		var time_limited = (qType === 103 || qType === 3) && !answerReady;
 
@@ -1224,7 +1306,7 @@
 		var but_text = button.append('text')
 				.style('font-size', '16px')
 		  		.attr('fill', 'black')
-		  		.attr('x', sep2 +  width*0.33 / 4 - 35)
+		  		.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 		  		.attr('y', height/2 - 8  )
 		  		.text(but_text);
 
@@ -1392,6 +1474,9 @@
 				but_state = true;
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
+				bbut_state = false;
+				bbut_color = 'green';
+				bbut_rect.attr('stroke', bbut_color);
 			}
 		}
 		var getTextInput = function(id){
@@ -1783,7 +1868,18 @@
 		var titleW = 1300;
 		var titleH = 150;
 		var exp_ready = false;
-
+		back_button.on("click", function(){
+			curQ = displayNone();
+			event = {
+								name: 'addGraph',
+								question: content.parent.getQid(),
+								reload: true
+								};
+			//console.log('View will now request reload');
+			content.parent.receiveEvent(event);
+			
+			
+		});
 		button.on("click", function() {
 
 				var qid = content.parent.getQid();
@@ -1808,12 +1904,11 @@
 							but_color = 'red';
 							but_rect.attr('stroke', but_color);
 						}
-						else{
+						else{//This is leftover code, never run
 							// load next training
 							curQ = displayNone();
 							but_color = 'green';
 							but_rect.attr('stroke', but_color);
-						
 							event = {
 												name: 'addGraph',
 												question: content.parent.getQid(),
@@ -1904,7 +1999,7 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35)
+											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Next');
 								}
@@ -1913,7 +2008,7 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35)
+											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Finish');
 								}
@@ -2015,7 +2110,7 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35)
+											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Next');
 								}
@@ -2024,7 +2119,7 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35)
+											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Finish');
 
@@ -2069,7 +2164,7 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35)
+											.attr('x', sep2 +  width*0.33 / 4 - 35 +b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Start');
 											but_state = true;
