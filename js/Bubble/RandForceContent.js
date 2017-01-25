@@ -1063,8 +1063,9 @@
 				}
 				if( equal )
 					{
-					myText = 'Your answer is correct.';
-					self.display.viewConstructor.makeDialog(d3.select(self.element), myText, 400, 300, 'Perfect', id, self);
+					//self.display.viewConstructor.refreshGraphs(self);
+					//myText = 'Your answer is correct.';
+					//self.display.viewConstructor.makeDialog(d3.select(self.element), myText, 400, 300, 'Perfect', id, self);
 					/*
 					new $P.HintBox({
 						parent: this,
@@ -1082,8 +1083,9 @@
 					}
 				else
 				    {
-				    	myText = 'The correct answer is: ' + correct[id - 203];
-				    	self.display.viewConstructor.makeDialog(d3.select(self.element), myText, 400, 300, 'Correction', id, self);
+						//self.display.viewConstructor.refreshGraphs(self);
+				    	//myText = 'The correct answer is: ' + correct[id - 203];
+				    	//self.display.viewConstructor.makeDialog(d3.select(self.element), myText, 400, 300, 'Correction', id, self);
 				    	//self.parent.resetPCount(); 
 
 				    	//alert('The correct answer is: ' + correct[id - 101]);
@@ -1259,26 +1261,52 @@
 				//if ((dw && dw !== 0) || (dh && dh !== 0)) {this.layout.force.start();}
 				this.updateSvgPosition();
 			},
+			hideTopMessage : function(){
+				d3.selectAll(".topmessage").remove();
+			},
+			showTopMessage: function(message){
+				var self = this;
+				self.svg.append('rect')
+					.attr("class", "topmessage")
+					.attr('x', self.w/2 - message.length*7.5)
+					.attr('y', 0)
+					.attr('width', message.length*16)
+					.attr('height', 40)
+					.attr('stroke-width', 1)
+					.attr('stroke', 'white')
+					.attr('fill', '#ddd');
+				self.svg.append('text')
+					.attr("class", "topmessage")
+					.style('font-size', '24px')
+					.style('font-weight', 'bold')
+					.style('font-decoration', 'underline')
+					.attr('fill', 'black')
+					.attr('x', self.w/2 - message.length*6)
+					.attr('y', 20)
+					.attr('dominant-baseline', 'middle')
+					.text(message);
+			},
 			hideGraph: function(text, task) {
 			  		 var self = this;
 					var hider= self.svg.append('rect')
-							.attr('x', 0)
-							.attr('y', 0)
-							.attr('width', self.w)
-							.attr('height', self.h)
-							.attr('stroke-width', 1)
-							.attr('stroke', 'white')
-							.attr('fill', 'white');
+						.attr('x', 0)
+						.attr('y', 0)
+						.attr('width', self.w)
+						.attr('height', self.h)
+						.attr('stroke-width', 1)
+						.attr('stroke', 'white')
+						.attr('fill', 'white');
 					self.hiders.push(hider);
-					self.svg.append('text')
-							.style('font-size', '24px')
-							.style('font-weight', 'bold')
-							.style('font-decoration', 'underline')
-							.attr('fill', 'black')
-							.attr('x', self.w/2 - 100)
-							.attr('y', self.h/2 - 20)
-							.attr('dominant-baseline', 'middle')
-							.text(text);
+					var itext = self.svg.append('text')
+						.style('font-size', '24px')
+						.style('font-weight', 'bold')
+						.style('font-decoration', 'underline')
+						.attr('fill', 'black')
+						.attr('x', self.w/2 - 100)
+						.attr('y', self.h/2 - 20)
+						.attr('dominant-baseline', 'middle')
+						.text(text);
+					self.hiders.push(itext);
 					if(task)
 					{
 					var x;
@@ -1296,17 +1324,17 @@
 						.attr('y', 200)
 						.attr('dominant-baseline', 'middle')
 						.text(strings[0]);
-							
-					self.svg.append('text')
-						.style('font-size', '26px')
-						.style('font-weight', 'bold')
-						.style('font-decoration', 'underline')
-						.attr('fill', 'black')
-						.attr('x', self.w/2 - strings[1].length*6.5)
-						.attr('y', 200+25)
-						.attr('dominant-baseline', 'middle')
-						.text(strings[1]);
-
+					if(task.includes('\n')){
+						self.svg.append('text')
+							.style('font-size', '26px')
+							.style('font-weight', 'bold')
+							.style('font-decoration', 'underline')
+							.attr('fill', 'black')
+							.attr('x', self.w/2 - strings[1].length*6.5)
+							.attr('y', 200+25)
+							.attr('dominant-baseline', 'middle')
+							.text(strings[1]);
+					}
 					}
 			},
 			revealGraph: function() {

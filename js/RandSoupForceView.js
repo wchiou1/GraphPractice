@@ -107,5 +107,8 @@
 	$P.RandSoupForceView.makeDialog = function(parentSelection, myText, width, height, title, correct, content) {
 		return $P.GraphForceView.makeDialog(parentSelection, myText, width, height, title, correct, content);
 		};
+	$P.RandSoupForceView.refreshGraphs = function() {
+		return $P.GraphForceView.refreshGraphs();
+		};
 
 })(PATHBUBBLES);

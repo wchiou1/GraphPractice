@@ -21,6 +21,7 @@ $P.NavCanvas = $P.defineClass(
 			this.scale = this.getHeight() / $P.state.mainCanvas.getHeight();
 			this.viewbox.updatePosition();},
 		mousedown: function(event, x, y) {
+			return;//Nav canvas is not needed, disable mouse functionality
 			if ('default' !== this.state) {return;}
 			if (this.viewbox.contains(x / this.scale, y / this.scale)) {
 				this.state = 'dragview';

@@ -578,7 +578,7 @@
 
 			},
 		{
-
+			
 			highlight: function(d, answer, give) {
 				var self = this;
 				var allHighlights = self.parentBubble.getNodeSelection();
@@ -590,9 +590,13 @@
 				}
 				//If there is an answer
 				if(answer){
+					//Don't change highlight states!
 					//If it's highlighted and it's not an answer...
 					if ((d.layoutId in self.highlights) && !(d.layoutId in answer) )
 					{
+						//Change highlight color to Red
+						
+						
 						delete self.highlights[d.layoutId];
 						self.parentBubble.deleteNodeSelection(d.layoutId);
 					}
@@ -892,7 +896,6 @@
 								if(display.viewID === self.index){
 									if(isNaN(display.highlighted))
 										display.highlighted = 2;
-									
 									else
 										display.highlighted = undefined + 1;
 									
@@ -1149,12 +1152,12 @@
 	$P.GraphForceView.makeLegend = function(content, parentSelection, width, height, viewID, timeoutEvent) {
 			var answerReady = content.parent.getAnswerReady();
 	//  Question pool:
-		var practice_questions = [ ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup
-								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // soup
-								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
-								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
-								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
-								   ' For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
+		var practice_questions = [ ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup
+								   ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // soup
+								   ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
+								   ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // sm
+								   ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
+								   ' For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other.',  // mirror
 								  // ' Which graph does not contain node "X"?',  // mirror
 									/*
 								   ' Which node(s) exist in one graph but not the other? ',   // soup
@@ -1175,7 +1178,7 @@
 								  // ' Which of the group "X" nodes is/are connected to 4 or more nodes in all graphs?',  // mirror
 									];
 
-		var questions = ['For the subnetwork containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup - small data (20 nodes) 0
+		var questions = ['For the subgraph containing the most nodes,\n mark the nodes that are missing in one graph but not the other. ',  // soup - small data (20 nodes) 0
 						 //'Mark all the node(s) that exist in one graph but not the other. ',   // soup  9  --> 18
 						 'Estimate the number of node differences between the two graphs.'
 						 ];
@@ -1312,7 +1315,7 @@
 
 
 
-		 var cbutton;
+		 //var cbutton;
 
 		function displayNone() {}
 
@@ -1542,7 +1545,7 @@
 	 {
 		 if( qType === 102 || qType === 104 || qType === 101 )
 			{
-
+			/*
 			cbutton = legend.append('g')
 					.attr('id', 'cbutton');
 
@@ -1565,6 +1568,7 @@
 		  		.attr('x', width - 120)
 		  		.attr('y', height-36  )
 		  		.text(cbut_text);
+				*/
 		  	}
 		if(qType === 1 || qType === 101)
 		{
@@ -1855,7 +1859,7 @@
 
 			     	}
 			     else
-			     	content.hideGraph('Click \'Start\' when ready', 'Task 1:  For the subnetwork containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
+			     	content.hideGraph('Click \'Start\' when ready', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 			     }
 
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -1868,6 +1872,21 @@
 		var titleW = 1300;
 		var titleH = 150;
 		var exp_ready = false;
+		var refreshGraphs = function(){
+			event = {
+				name: 'addGraph',
+				question: content.parent.getQid(),
+				reload: true
+			};
+			//console.log('View will now request reload');
+			content.parent.receiveEvent(event);
+		};
+		back_button.on("mouseover", function(){
+			bbut_rect.attr('fill', '#aaa');
+		});
+		back_button.on("mouseleave", function(){
+			bbut_rect.attr('fill', '#ddd');
+		});
 		back_button.on("click", function(){
 			curQ = displayNone();
 			event = {
@@ -1879,6 +1898,12 @@
 			content.parent.receiveEvent(event);
 			
 			
+		});
+		button.on("mouseover", function(){
+			but_rect.attr('fill', '#aaa');
+		});
+		button.on("mouseleave", function(){
+			but_rect.attr('fill', '#ddd');
 		});
 		button.on("click", function() {
 
@@ -1899,7 +1924,13 @@
 		  				
 		  					//curQ = displayPractice(0);
 		  					qType = content.parent.getQtype();
-				  			titleScreen(parentSelection, '', titleW, titleH, 'Task 1: For the subnetwork containing the most nodes, mark the nodes that are missing in one graph but not the other.', 'Start', 101, content.parent, []); // ['Please make sure to select the graph in which node X is missing', 'Click the "Begin Practice" button when ready']);
+				  			//titleScreen(parentSelection, '', titleW, titleH, 'Task 1: For the subgraph containing the most nodes, mark the nodes that are missing in one graph but not the other.', 'Start', 101, content.parent, []); // ['Please make sure to select the graph in which node X is missing', 'Click the "Begin Practice" button when ready']);
+							event = {
+												name: 'addGraph',
+												question: content.parent.getQid(),
+												reload: true
+												};
+							content.parent.receiveEvent(event);
 							but_state = false; 
 							but_color = 'red';
 							but_rect.attr('stroke', but_color);
@@ -2016,41 +2047,44 @@
 								content.hideGraph('Please select answer');
 							}
 						else {
-								if(qType === 102 || qType === 2 || qType === 104 || qType === 4)
-									answerToRecord = content.parent.getNodeSelection();
-								else
-									answerToRecord = self.curSelection;
-									toRecord = {
-												answer: answerToRecord,
-												certainty: self.curCertainty
-												};
-								var answer = content.parent.recordAnswer(toRecord);
+							if(qType === 102 || qType === 2 || qType === 104 || qType === 4)
+								answerToRecord = content.parent.getNodeSelection();
+							else
+								answerToRecord = self.curSelection;
+								toRecord = {
+											answer: answerToRecord,
+											certainty: self.curCertainty
+											};
+							var answer = content.parent.recordAnswer(toRecord);
 
 
-								if(answer)
-									{
+							if(answer)
+							{
+								content.parent.newQuestion();
+								var qid = content.parent.getQid();
+								curQ.remove();
 
-											content.parent.newQuestion();
-											var qid = content.parent.getQid();
-											curQ.remove();
-
-											curQ = displayPractice(qid - 202);
-											but_color = 'red';
-											but_rect.attr('stroke', but_color);
-											pre_state = false;
-											but_state=false;
-
-									}
-
-								else {
-
-											if(qType === 103){
-											 qi--;
-											content.revealGraph();
-											content.parent.giveAnswer(); }
-										}
-
-
+								curQ = displayPractice(qid - 202);
+								but_color = 'red';
+								but_rect.attr('stroke', but_color);
+								pre_state = false;
+								but_state=false;
+								content.hideTopMessage();
+								refreshGraphs();
+							}
+							else {
+								content.showTopMessage("Check Corrections");
+								if(qType === 103){
+									qi--;
+									content.revealGraph();
+									content.parent.giveAnswer(); 
+								}
+								else{
+									content.parent.giveAnswer(); 
+									content.parent.giveAnswer(); 
+								}
+							}
+							
 						}
 				    }
 				  }
@@ -2204,119 +2238,129 @@
 				 }
 				});
 		
-		if(cbutton)
+		/*if(cbutton)
 		{
-
 			cbutton.on("click", function() { 
 			content.parent.giveAnswer();
 			content.parent.giveAnswer();
 			});
 		}
+		*/
 		//if(viewID === 1 && qType < 200) 
 		content.parent.resetNodeSelection(); 
 
 		return legend;
 	};
-
+	$P.GraphForceView.refreshGraphs = function(content){
+		curQ = content.displayNone();
+		event = {
+				name: 'addGraph',
+				question: content.parent.getQid(),
+				reload: true
+				};
+		//console.log('View will now request reload');
+		content.parent.receiveEvent(event);
+	};
 $P.GraphForceView.makeDialog = function(parentSelection, myText, width, height, title, id, content) {
-			var dialog = parentSelection.append('div')
-			.attr('id', 'dialog-message')
-			.attr('title', 'Important Information')
+	var dialog = parentSelection.append('div')
+	.attr('id', 'dialog-message')
+	.attr('title', 'Important Information')
+	.style('font-size', '16px')
+	.attr('fill', 'black')
+	.attr('dominant-baseline', 'middle');
+
+	var dspan = dialog.append('span')
+		//.attr('class','ui-widget-content')
+		.style('color','white')
+		.style('height', 50);
+
+		/*
+		dspan.append('span')
+		.attr('class', 'ui-icon ui-icon-info')
+		.style('float', 'left')
+		.style('margin', '10px 7px 0 0');*/
+
+	var ddiv = dialog.append('div')
+				.style('margin-left', '23px');
+		ddiv.append('p')
 			.style('font-size', '16px')
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle');
+			.attr('fill', 'white')
+			.attr('dominant-baseline', 'middle')
+			.text(myText);
 
-			var dspan = dialog.append('span')
-				//.attr('class','ui-widget-content')
-				.style('color','white')
-				.style('height', 50);
+	$(dialog).dialog({
+			dialogClass: 'ui-dialog-osx',
+			//dialogClass: 'alert',
+			closeOnEscape: true,
+			resizable: false,
+			title: title,
+			modal: true,
+			width: width,
+			height: height,
+			position: ['center', 'center'],
+			bgiframe: false,
+			hide: {effect: 'scale', duration: 1},
+			buttons: [{
+						text: 'OK',
+						click: function() {
+							$(this).dialog('close');
+							$("dialog-message").dialog("destroy");
+							}
+						}
+						],
+			close: function(event, ui){
+				var titleW = 1200;
+				var titleH = 150;
+				var qid = content.parent.getQid();
+				var pCount = content.parent.getPcount()-1; 
+				console.log('pCount = ' + pCount);
 
-				/*
-				dspan.append('span')
-				.attr('class', 'ui-icon ui-icon-info')
-				.style('float', 'left')
-				.style('margin', '10px 7px 0 0');*/
+				if(pCount === 5 && title === 'Perfect' )
+				{
+					titleScreen(parentSelection, '', titleW, titleH, 'Please listen to Task 2 Training.', 'Got it', qid, content.parent, []);
+					
+					//content.parent.resetTransition();
+					//content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
 
-			var ddiv = dialog.append('div')
-						.style('margin-left', '23px');
-				ddiv.append('p')
-					.style('font-size', '16px')
-					.attr('fill', 'white')
-					.attr('dominant-baseline', 'middle')
-					.text(myText);
+				}
+				//
+																																								/* ['Click on a node to highlight and add it to selection ',
+																																				' Click on a selected node to de-select it',
+																																								' Click "Next" once you have finalized your selection',
+																																								' Now, click the "Begin Practice" button to start']); */
+				//else if(pCount === 12 && title === 'Perfect')
+				 //{
+					//titleScreen(parentSelection, '', titleW, titleH, 'Task 3: Estimate the number of node differences between the two graphs.', 'Start', qid, content.parent, []);
+																																								/* ['Observe the number of edges connected to H in each graph ',
+																																								' If the number of edges for node H in graph 1 is N1',
+																																								' And the number of edges for node H in graph 2 is N2',
+																																								' Select "Increases" if N1 < N2',
+																																								' Select "Decreases" if N1 > N2',
+																																								' Select "Remains the same" if N1 = N2',
+																																								' Now, click the "Begin Practice" button to start']); */
+				 //}
 
-			$(dialog).dialog({
-				   	dialogClass: 'ui-dialog-osx',
-				    //dialogClass: 'alert',
-				    closeOnEscape: true,
-					resizable: false,
-					title: title,
-					modal: true,
-					width: width,
-					height: height,
-					position: ['center', 'center'],
-					bgiframe: false,
-					hide: {effect: 'scale', duration: 1},
-					buttons: [{
-								text: 'OK',
-								click: function() {
-									$(this).dialog('close');
-									$("dialog-message").dialog("destroy");
-									}
-								}
-								],
-					close: function(event, ui){
-						var titleW = 1200;
-						var titleH = 150;
-						var qid = content.parent.getQid();
-						var pCount = content.parent.getPcount()-1; 
-						console.log('pCount = ' + pCount);
+				// else if(id === 115 && title === 'Perfect')
+				//{
+				// 	titleScreen(parentSelection, '', titleW, titleH, 'Task 4: Which of the group "X" nodes is/are connected to 4 or more nodes in all graphs?', 'Start', qid, content.parent, []);
+				// }
 
-						if(pCount === 5 && title === 'Perfect' )
-									{
-										titleScreen(parentSelection, '', titleW, titleH, 'Please listen to Task 2 Training.', 'Got it', qid, content.parent, []);
-										//content.parent.resetTransition();
-										//content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
-
-									}
-						//
-						 																																				/* ['Click on a node to highlight and add it to selection ',
-				    																																	' Click on a selected node to de-select it',
-				    																																					' Click "Next" once you have finalized your selection',
-				    																																					' Now, click the "Begin Practice" button to start']); */
-						//else if(pCount === 12 && title === 'Perfect')
-						 //{
-						 	//titleScreen(parentSelection, '', titleW, titleH, 'Task 3: Estimate the number of node differences between the two graphs.', 'Start', qid, content.parent, []);
-						 																																				/* ['Observe the number of edges connected to H in each graph ',
-				    																																					' If the number of edges for node H in graph 1 is N1',
-				    																																					' And the number of edges for node H in graph 2 is N2',
-				    																																					' Select "Increases" if N1 < N2',
-				    																																					' Select "Decreases" if N1 > N2',
-				    																																					' Select "Remains the same" if N1 = N2',
-				    																																					' Now, click the "Begin Practice" button to start']); */
-						 //}
-
-						// else if(id === 115 && title === 'Perfect')
-						//{
-						// 	titleScreen(parentSelection, '', titleW, titleH, 'Task 4: Which of the group "X" nodes is/are connected to 4 or more nodes in all graphs?', 'Start', qid, content.parent, []);
-						// }
-
-						  else if(pCount === 18 && title === 'Perfect')
-						 {
-						 	titleScreen(parentSelection, 'You have completed the practice tasks!', 500, 600, 'Congratulations!', 'Start', qid, content.parent, ['Click the "Start" button to begin the experiment ']);
-						 }
-						 else if (title === 'Perfect')
-						 {
-						 event = {
-												name: 'addGraph',
-												question: content.parent.getQid(),
-												reload: true
-												};
-							//console.log('View will now request reload');
-							content.parent.receiveEvent(event);
-						 }
-					}
-				});
+				else if(pCount === 18 && title === 'Perfect')
+				{
+					titleScreen(parentSelection, 'You have completed the practice tasks!', 500, 600, 'Congratulations!', 'Start', qid, content.parent, ['Click the "Start" button to begin the experiment ']);
+				}
+				else if (title === 'Perfect')
+				{
+				event = {
+										name: 'addGraph',
+										question: content.parent.getQid(),
+										reload: true
+										};
+					//console.log('View will now request reload');
+					content.parent.receiveEvent(event);
+				}
+			}
+		});
 
 	};
 
