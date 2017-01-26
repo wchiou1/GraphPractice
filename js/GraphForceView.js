@@ -10,7 +10,9 @@
 				self.generate = false;
 
 			$P.ForceView.call(self, config);
-
+			self.task2;
+			self.started;
+			self.audio;
 			self.hiddenNodeTypes = {};
 			self.highlights = {};
 			self.lowlights = {}; 
@@ -595,18 +597,16 @@
 					if ((d.layoutId in self.highlights) && !(d.layoutId in answer) )
 					{
 						//Change highlight color to Red
-						
-						
-						delete self.highlights[d.layoutId];
-						self.parentBubble.deleteNodeSelection(d.layoutId);
+						self.lowlights[d.layoutId] = 1; 
 					}
 					else{
 						//If it's not highlighted then it's not on this list... must be an answer
 						self.highlights[d.layoutId] = 1;
 					}
 					self.parentBubble.setNodeSelection(self.highlights);
-
-					self.updateNodes(self.nodes);
+					
+					self.updateSingleRedlight(self.nodes,d.layoutId);
+					
 				}
 				else{
 					var selection = self.nodes;
@@ -620,13 +620,15 @@
 						if ('entity' === dd.klass || 'reaction' === dd.klass) {
 							if (dd.displays) {
 								dd.displays.forEach(function(display) {
-									if((!isNaN(display.highlighted)&&display.viewID !== self.index)||(isNaN(display.highlighted)&&display.viewID === self.index)){
+									if(((!isNaN(display.highlighted)||!isNaN(display.highlighted))&&display.viewID !== self.index)||//If the node is high/redlighted AND it's on the other side(means it will STAY highlighted) then add to count
+									(isNaN(display.highlighted)&&isNaN(display.lowlighted)&&display.viewID === self.index)){//OR if the node is neither high/redlighted AND it is the one being clicked on(means it will toggle) then add to count
 										highlightCount = highlightCount + 1;
 									}
 									});
 								}
 							}
 					});
+					
 					//If there are any nodes active, switch it on
 					if(highlightCount>0){
 						//switch it on
@@ -643,6 +645,7 @@
 
 					self.updateSingleNode(self.nodes,d.layoutId);
 				}
+				
 				
 				
 				
@@ -848,6 +851,7 @@
 				this.onZoom();},
 
 			updateNodes: function(selection) {
+				//This update is designed to match the highlight to the global highlight array
 				var self = this;
 
 				selection.style('display', function(d, i) {
@@ -864,9 +868,10 @@
 						d.lowlighted = lowlights + 1;
 						if (d.displays) {
 							d.displays.forEach(function(display) {
-								if(display.viewID === self.index)
+								if(display.viewID === self.index){
 									display.highlighted = highlights + 1;
-								display.lowlighted = lowlights + 1; 
+								}
+								display.lowlighted = lowlights + 1;
 								});
 							}
 						}
@@ -876,8 +881,10 @@
 				});
 
 			},
-			
-			updateSingleNode: function(selection,id) {
+			updateSingleRedlight: function(selection,id) {
+				//This update will use the global array to activate redlights
+				//It has logic protection incase this update is used more than once
+				//This update only updates ONE node
 				var self = this;
 
 				selection.style('display', function(d, i) {
@@ -890,16 +897,63 @@
 					var selection = d3.select(this);
 					if ('entity' === d.klass || 'reaction' === d.klass) {
 						var highlights = self.highlights[d.layoutId];
+						var lowlights = self.lowlights[d.layoutId];
 						d.highlighted = highlights + 1;
+						d.lowlighted = lowlights + 1;
 						if (d.displays) {
 							d.displays.forEach(function(display) {
 								if(display.viewID === self.index){
-									if(isNaN(display.highlighted))
-										display.highlighted = 2;
-									else
+									//if the node is marked for a red highlight AND it's highlighted
+									//turn off highlight and turn on red highlight
+									if(!isNaN(display.highlighted)&&!isNaN(lowlights+1)){//if it's highlighted and redlighted
 										display.highlighted = undefined + 1;
-									
+										display.lowlighted = lowlights + 1; 
+									}
+									else//Only apply the highlight if red highlight is off
+										if(isNaN(lowlights+1))
+											display.highlighted = highlights + 1;
 								}
+								
+								});
+							}
+						}
+
+					if ('location' === d.klass) {
+						selection.attr('stroke-width', self.display.collapsedLocations[d.id] ? 5 : 1);}
+				});
+
+			},
+			
+			updateSingleNode: function(selection,id) {
+				//This update is designed to force a highlight toggle for only a SINGLE node
+				//This update IGNORES the global array of highlights and will toggle redlights off
+				var self = this;
+
+				selection.style('display', function(d, i) {
+					return self.isNodeVisible(d, this) ? '' : 'none';});
+
+				selection.each(function(d, i) {
+					if (!d) {return;}
+					if (d.layoutId != id) {return;}
+
+					var selection = d3.select(this);
+					if ('entity' === d.klass || 'reaction' === d.klass) {
+						var highlights = self.highlights[d.layoutId];
+						var lowlights = self.lowlights[d.layoutId];
+						d.highlighted = highlights + 1;
+						d.lowlighted = lowlights + 1;
+						if (d.displays) {
+							d.displays.forEach(function(display) {
+								if(display.viewID === self.index){
+									if(isNaN(display.highlighted)&&isNaN(lowlights + 1))
+										display.highlighted = 2;
+									else{
+										display.highlighted = undefined + 1;
+										delete self.lowlights[d.layoutId];
+										display.lowlighted = undefined + 1; 
+									}
+								}
+								
 								});
 							}
 						}
@@ -1316,6 +1370,7 @@
 
 
 		 //var cbutton;
+		 
 
 		function displayNone() {}
 
@@ -1440,7 +1495,7 @@
 
 
 		var leftX = width - 165;
-
+		
 
 
 
@@ -1720,7 +1775,7 @@
 			.text('Remains the same');
 
 		}
-
+		
 		 x = sep1 + width* 0.15;
 		 y = 20;
 		  legend.append('text')
@@ -1850,17 +1905,20 @@
 			     if (qi === 13){
 			     	content.hideGraph('', 'This is the end of the training', 13);
 			     	legend.append('rect')
-								.attr('x', 15)
-								.attr('y', 5)
-								.attr('width', sep1 - 70)
-								.attr('height', height - 30)
-								.attr('stroke', 'white')
-								.attr('fill','white');
-
+						.attr('x', 15)
+						.attr('y', 5)
+						.attr('width', sep1 - 70)
+						.attr('height', height - 30)
+						.attr('stroke', 'white')
+						.attr('fill','white');
 			     	}
-			     else
-			     	content.hideGraph('Click \'Start\' when ready', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
-			     }
+			    else{
+					if(typeof self.started === "undefined")
+						content.hideGraph('Click \'Start\' when ready', 'Training');
+					else
+						content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
+				}
+			}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1888,12 +1946,14 @@
 			bbut_rect.attr('fill', '#ddd');
 		});
 		back_button.on("click", function(){
+			if(typeof self.task2 === "undefined" || self.task2 == false)
+				return;
 			curQ = displayNone();
 			event = {
-								name: 'addGraph',
-								question: content.parent.getQid(),
-								reload: true
-								};
+					name: 'addGraph',
+					question: content.parent.getQid(),
+					reload: true
+					};
 			//console.log('View will now request reload');
 			content.parent.receiveEvent(event);
 			
@@ -1906,7 +1966,24 @@
 			but_rect.attr('fill', '#ddd');
 		});
 		button.on("click", function() {
-
+			if(self.audio){
+				self.audio.pause();
+			}
+			console.log(self.started);
+			if(typeof self.started === "undefined"){
+				self.started = true;
+				self.audio = new Audio('audio/Let us start.wav');
+				self.audio.play();
+				but_text.remove();
+				but_text = button.append('text')
+							.style('font-size', '16px')
+							.attr('fill', 'black')
+							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+							.attr('y', height/2 - 8  )
+							.text('Next');
+				content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
+				return;
+			}
 				var qid = content.parent.getQid();
 				 if(qid >= 200  && qid <= 202) // 203
 				 	{
@@ -1926,14 +2003,16 @@
 		  					qType = content.parent.getQtype();
 				  			//titleScreen(parentSelection, '', titleW, titleH, 'Task 1: For the subgraph containing the most nodes, mark the nodes that are missing in one graph but not the other.', 'Start', 101, content.parent, []); // ['Please make sure to select the graph in which node X is missing', 'Click the "Begin Practice" button when ready']);
 							event = {
-												name: 'addGraph',
-												question: content.parent.getQid(),
-												reload: true
-												};
+								name: 'addGraph',
+								question: content.parent.getQid(),
+								reload: true
+								};
 							content.parent.receiveEvent(event);
 							but_state = false; 
 							but_color = 'red';
 							but_rect.attr('stroke', but_color);
+							self.audio = new Audio('audio/Task 1.wav');
+							self.audio.play();
 						}
 						else{//This is leftover code, never run
 							// load next training
@@ -2060,8 +2139,43 @@
 
 							if(answer)
 							{
+								if(qid === 208 && typeof self.task2 === "undefined"){//We are starting task 2!
+									self.task2 = false;//Set task2 so that the rest button knows to ignore input
+									conceal = legend.append('rect')
+										.attr('x', sep1+4)
+										.attr('y', 5)
+										.attr('width', sep2 - sep1 - 15)
+										.attr('height', height - 30)
+										.attr('stroke', 'white')
+										.attr('fill','white');
+									curQ.remove();
+									content.hideTopMessage();
+									content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
+									self.audio = new Audio('audio/Task 2.wav');
+									self.audio.play();
+									return;
+								}
+								if(self.task2 == false)
+									self.task2 = true;//Tell reset button that coast is clear
 								content.parent.newQuestion();
 								var qid = content.parent.getQid();
+								if(qid === 215){
+									conceal = legend.append('rect')
+										.attr('x', sep1+4)
+										.attr('y', 5)
+										.attr('width', sep2 - sep1 - 15)
+										.attr('height', height - 30)
+										.attr('stroke', 'white')
+										.attr('fill','white');
+									curQ.remove();
+									content.hideTopMessage();
+									content.hideGraph('Please inform the experimenter so that you may begin the experiment', 'END OF TRAINING');
+									button.remove();
+									back_button.remove();
+									self.audio = new Audio('audio/End.wav');
+									self.audio.play();
+									return;
+								}
 								curQ.remove();
 
 								curQ = displayPractice(qid - 202);
@@ -2071,6 +2185,22 @@
 								but_state=false;
 								content.hideTopMessage();
 								refreshGraphs();
+								//Play the correct audio
+								if(qid === 204){//It's the first vismirrors
+									self.audio = new Audio('audio/VisMirrors.wav');
+									self.audio.play();
+								}
+								else if(qid === 205){//It's the first vismirrors
+									self.audio = new Audio('audio/VisGumbo.wav');
+									self.audio.play();
+								}
+								else if(qid === 206){
+									self.audio = new Audio('audio/3 Trials.wav');
+									self.audio.play();
+								}else if(qid === 207){
+									self.audio = new Audio('audio/3 Sizes.wav');
+									self.audio.play();
+								}
 							}
 							else {
 								content.showTopMessage("Check Corrections");
@@ -2080,7 +2210,6 @@
 									content.parent.giveAnswer(); 
 								}
 								else{
-									content.parent.giveAnswer(); 
 									content.parent.giveAnswer(); 
 								}
 							}

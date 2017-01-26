@@ -1302,7 +1302,7 @@
 						.style('font-weight', 'bold')
 						.style('font-decoration', 'underline')
 						.attr('fill', 'black')
-						.attr('x', self.w/2 - 100)
+						.attr('x', self.w/2 - text.length*5.5)
 						.attr('y', self.h/2 - 20)
 						.attr('dominant-baseline', 'middle')
 						.text(text);
