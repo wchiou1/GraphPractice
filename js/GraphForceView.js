@@ -10,7 +10,10 @@
 				self.generate = false;
 
 			$P.ForceView.call(self, config);
+			self.certaintyPanel = false;
+			self.answerVerified = false;
 			self.task2;
+			self.introGraphs;
 			self.started;
 			self.audio;
 			self.hiddenNodeTypes = {};
@@ -354,11 +357,7 @@
 					 {
 						self.highlight(d);
 					 	pre_state = true;
-						for(var k in scaleboxes)
-							{
-							var s = scaleboxes[k];
-							s.setEnabled();
-							}
+						
 					 }
 				   }
 				   else
@@ -691,8 +690,8 @@
 				var qType = self.parentBubble.getQtype();
 				if(qType === 103)
 				{
-					console.log("Chicken2");
-					listBox.giveAnswer(answer);
+					//console.log("Chicken2");
+					//listBox.giveAnswer(answer);
 				}
 				pre_state = true;
 				
@@ -1119,12 +1118,14 @@
 		});
 
 		var pre_state = false;
-		var but_state = false;
+		var but_state = true;
 		var but_color = 'red';
 		var but_rect;
 		var bbut_state = false;
 		var bbut_color = 'red';
 		var bbut_rect;
+		
+
 
 		var scaleboxes = {};
 		var listBox;
@@ -1324,7 +1325,7 @@
 		if(timeoutEvent)
 		{
 			but_color = 'red';
-			but_state = false;
+			but_state = true;
 			bbut_color = 'green';
 			bbut_state = true;
 		}
@@ -1357,16 +1358,25 @@
 		var qType = content.parent.getQtype();
 		var time_limited = (qType === 103 || qType === 3) && !answerReady;
 
-		var but_text = (content.parent.getQcount() >= (numTrials - 1) && !time_limited)? ' Finish' : time_limited? 'Done': ' Next ';
-		if(qType === 200) but_text = 'Start';
-
-		var but_text = button.append('text')
-				.style('font-size', '16px')
-		  		.attr('fill', 'black')
-		  		.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
-		  		.attr('y', height/2 - 8  )
-		  		.text(but_text);
-
+		var but_text = (content.parent.getQcount() >= (numTrials - 1) && !time_limited)? ' Finish' : time_limited? 'Done': ' Check Answer ';
+		if(qType === 200) but_text = 'Start';//Not sure if this code does anything anymore...
+		if(but_text == ' Check Answer '){
+			var but_text = button.append('text')
+					.style('font-size', '16px')
+					.attr('fill', 'black')
+					.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
+					.attr('y', height/2 - 8  )
+					.text(but_text);
+		}
+		else{
+			var but_text = button.append('text')
+					.style('font-size', '16px')
+					.attr('fill', 'black')
+					.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+					.attr('y', height/2 - 8  )
+					.text(but_text);
+		}
+		
 
 
 		 //var cbutton;
@@ -1540,11 +1550,14 @@
 		var getTextInput = function(id){
 				console.log(id);
 				pre_state = true;
-				for(var k in scaleboxes)
+				but_state = true;
+				but_color = 'green';
+				but_rect.attr('stroke', but_color);
+				/*for(var k in scaleboxes)
 				{
 				  var s = scaleboxes[k];
 				  s.setEnabled();
-				}
+				}*/
 				self.curSelection = id;
 		}
 		function checkbox(id, y) {
@@ -1775,115 +1788,8 @@
 			.text('Remains the same');
 
 		}
-		
-		 x = sep1 + width* 0.15;
-		 y = 20;
-		  legend.append('text')
-			.style('font-size', '14px')
-			.attr('x', x + 65)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('Certainty');
-
-			y += 20;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('Low');
-
-
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x + 180)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('High');
-
-			y += 15;
-			x += 5;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('1');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('2');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('3');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('4');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('5');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('6');
-
-			x += 30;
-			legend.append('text')
-			.style('font-size', '11px')
-			.attr('x', x)
-			.attr('y', y)
-			.attr('fill', 'black')
-			.attr('dominant-baseline', 'middle')
-			.text('7');
-
-			y += 25;
-			x = sep1 + width * 0.15 + 15; ;
-			 scalebox('s1', x, y);
-			 x += 30;
-			 scalebox('s2', x, y);
-			x += 30;
-			 scalebox('s3', x, y);
-			 x += 30;
-			 scalebox('s4', x, y);
-			 x += 30;
-			 scalebox('s5', x, y);
-			 x += 30;
-			 scalebox('s6', x, y);
-			 x += 30;
-			 scalebox('s7', x, y);
-			}
+		//asd
+		}
 
 
 			if(time_limited)
@@ -1892,12 +1798,12 @@
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
 				conceal = legend.append('rect')
-								.attr('x', sep1+4)
-								.attr('y', 5)
-								.attr('width', sep2 - sep1 - 15)
-								.attr('height', height - 30)
-								.attr('stroke', 'white')
-								.attr('fill','white');
+					.attr('x', sep1+4)
+					.attr('y', 5)
+					.attr('width', sep2 - sep1 - 15)
+					.attr('height', height - 30)
+					.attr('stroke', 'white')
+					.attr('fill','white');
 
 			}
 			if(qType === 200)
@@ -1930,7 +1836,66 @@
 		var titleW = 1300;
 		var titleH = 150;
 		var exp_ready = false;
+		var displayScaleBoxes = function(){
+			x = sep1 + width* 0.15;
+			y = 20;
+			legend.append('text')
+				.style('font-size', '14px')
+				.attr('x', x + 65)
+				.attr('y', y)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text('Certainty');
+
+			y += 20;
+			legend.append('text')
+				.style('font-size', '11px')
+				.attr('x', x)
+				.attr('y', y)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text('Low');
+
+
+			legend.append('text')
+				.style('font-size', '11px')
+				.attr('x', x + 180)
+				.attr('y', y)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text('High');
+
+			y += 15;
+			x += 5;
+			for (var i = 1; i <= 7; i++) { 
+				legend.append('text')
+				.style('font-size', '11px')
+				.attr('x', x)
+				.attr('y', y)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text(i);
+
+				x += 30;
+			}
+			y += 25;
+			x = sep1 + width * 0.15 + 15;
+			scalebox('s1', x, y);
+			x += 30;
+			scalebox('s2', x, y);
+			x += 30;
+			scalebox('s3', x, y);
+			x += 30;
+			scalebox('s4', x, y);
+			x += 30;
+			scalebox('s5', x, y);
+			x += 30;
+			scalebox('s6', x, y);
+			x += 30;
+			scalebox('s7', x, y);
+		};
 		var refreshGraphs = function(){
+			self.answerVerified = false;
 			event = {
 				name: 'addGraph',
 				question: content.parent.getQid(),
@@ -1946,15 +1911,21 @@
 			bbut_rect.attr('fill', '#ddd');
 		});
 		back_button.on("click", function(){
-			if(typeof self.task2 === "undefined" || self.task2 == false)
+			if(typeof self.task2 !== "undefined" && self.task2 == false)
 				return;
+			content.parent.answerReady = false;
+			self.answerVerified = false;
+			self.certaintyPanel = false;
+			but_state=true;
+			but_color = 'green';
+			but_rect.attr('stroke', but_color);
 			curQ = displayNone();
 			event = {
 					name: 'addGraph',
 					question: content.parent.getQid(),
 					reload: true
 					};
-			//console.log('View will now request reload');
+			console.log('View will now request reload');
 			content.parent.receiveEvent(event);
 			
 			
@@ -1969,10 +1940,24 @@
 			if(self.audio){
 				self.audio.pause();
 			}
-			console.log(self.started);
+			if(typeof self.introGraphs === "undefined"){
+				self.introGraphs = true;
+				//Play the intro graphs audio
+				self.audio = new Audio('audio/Let us start3.wav');
+				self.audio.play();
+				but_text.remove();
+				but_text = button.append('text')
+							.style('font-size', '16px')
+							.attr('fill', 'black')
+							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+							.attr('y', height/2 - 8  )
+							.text('Next');
+				content.showImage("image/labeled graphs.png");
+				return;
+			}
 			if(typeof self.started === "undefined"){
 				self.started = true;
-				self.audio = new Audio('audio/Let us start.wav');
+				self.audio = new Audio('audio/Task 13.wav');
 				self.audio.play();
 				but_text.remove();
 				but_text = button.append('text')
@@ -1984,61 +1969,60 @@
 				content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 				return;
 			}
-				var qid = content.parent.getQid();
-				 if(qid >= 200  && qid <= 202) // 203
-				 	{
-				 		but_color = 'green';
-						but_rect.attr('stroke', but_color);
-						content.parent.newQuestion();
-					    qid = content.parent.getQid();
-						
-						if(qid === 203 || qid === 205 || qid === 207)
-						{
-							// setup for practice to begin
-
-							//qType = 101;
-		  					//content.parent.setQid(101);
-		  				
-		  					//curQ = displayPractice(0);
-		  					qType = content.parent.getQtype();
-				  			//titleScreen(parentSelection, '', titleW, titleH, 'Task 1: For the subgraph containing the most nodes, mark the nodes that are missing in one graph but not the other.', 'Start', 101, content.parent, []); // ['Please make sure to select the graph in which node X is missing', 'Click the "Begin Practice" button when ready']);
-							event = {
-								name: 'addGraph',
-								question: content.parent.getQid(),
-								reload: true
-								};
-							content.parent.receiveEvent(event);
-							but_state = false; 
-							but_color = 'red';
-							but_rect.attr('stroke', but_color);
-							self.audio = new Audio('audio/Task 1.wav');
-							self.audio.play();
-						}
-						else{//This is leftover code, never run
-							// load next training
-							curQ = displayNone();
-							but_color = 'green';
-							but_rect.attr('stroke', but_color);
-							event = {
-												name: 'addGraph',
-												question: content.parent.getQid(),
-												reload: true
-												};
-							//console.log('View will now request reload');
-							content.parent.receiveEvent(event);
-
-							}
-						
-
-				 	}
-				else 
+			
+			var qid = content.parent.getQid();
+			if(qid >= 200  && qid <= 202) // 203
+			{
+				but_color = 'green';
+				but_rect.attr('stroke', but_color);
+				content.parent.newQuestion();
+				qid = content.parent.getQid();
+					
+				if(qid === 203 || qid === 205 || qid === 207)
 				{
-				 if(but_state)
-				  {
+					// setup for practice to begin
+
+					//qType = 101;
+					//content.parent.setQid(101);
+				
+					//curQ = displayPractice(0);
+					qType = content.parent.getQtype();
+					//titleScreen(parentSelection, '', titleW, titleH, 'Task 1: For the subgraph containing the most nodes, mark the nodes that are missing in one graph but not the other.', 'Start', 101, content.parent, []); // ['Please make sure to select the graph in which node X is missing', 'Click the "Begin Practice" button when ready']);
+					event = {
+						name: 'addGraph',
+						question: content.parent.getQid(),
+						reload: true
+						};
+					content.parent.receiveEvent(event);
+					but_state = true; 
+					but_color = 'green';
+					but_rect.attr('stroke', but_color);
+					self.audio = new Audio('audio/SmallMultiples3.wav');
+					self.audio.play();
+				}
+				else{//This is leftover code, never run
+					// load next training
+					curQ = displayNone();
+					but_color = 'green';
+					but_rect.attr('stroke', but_color);
+					event = {
+										name: 'addGraph',
+										question: content.parent.getQid(),
+										reload: true
+										};
+					//console.log('View will now request reload');
+					content.parent.receiveEvent(event);
+
+				}
+						
+
+			}
+			else{
+				if(but_state){
 
 					//content.parent.getNodeSelection();
-				  if (qType > 100 && qType < 200)
-				  {
+					if (qType > 100 && qType < 200)
+					{
 				  
 				  	if(!time_limited) qi++;
 				  	 
@@ -2052,6 +2036,9 @@
 		  				else
 		  					answerToRecord = self.curSelection;
 
+						if(certainty){
+							//Certainty will be set to true when the answer is correct
+						}
 		  				toRecord = {
 		  							answer: answerToRecord,
 		  							certainty: self.curCertainty
@@ -2109,9 +2096,9 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+											.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
 											.attr('y', height/2 - 8  )
-											.text('Next');
+											.text('Check Answer');
 								}
 								else
 								{
@@ -2130,17 +2117,62 @@
 								answerToRecord = content.parent.getNodeSelection();
 							else
 								answerToRecord = self.curSelection;
+							
+							var answer = content.reportAnswer(qid,answerToRecord);
+
+							if(answer)
+							{
+								
+								
+								if(self.task2 == false)
+									self.task2 = true;//Tell reset button that coast is clear
+								if(!self.answerVerified){
+									self.answerVerified = true;
+									content.hideTopMessage();
+									content.showTopMessage("Answer is correct!");
+									//Change button to "Next"
+									but_text.remove();
+									but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Next');
+									return;
+								}
+								if(!self.certaintyPanel){
+									//We must setup the certainty panel!
+									self.certaintyPanel = true;
+									content.hideTopMessage();
+									content.hideGraph('Please enter how certain you are of your answer',' ');
+									displayScaleBoxes();
+									but_text.remove();
+									but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 68 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Submit Certainty');
+									but_state = false;
+									but_color = 'red';
+									but_rect.attr('stroke', but_color);
+									for(var k in scaleboxes)
+									{
+										var s = scaleboxes[k];
+										s.setEnabled();
+									}
+									return;
+								}
+								self.certaintyPanel = false;
+								content.hideTopMessage();
 								toRecord = {
 											answer: answerToRecord,
 											certainty: self.curCertainty
 											};
-							var answer = content.parent.recordAnswer(toRecord);
-
-
-							if(answer)
-							{
+								content.parent.recordAnswer(toRecord);
+								self.certaintyPanel = false;
 								if(qid === 208 && typeof self.task2 === "undefined"){//We are starting task 2!
-									self.task2 = false;//Set task2 so that the rest button knows to ignore input
+									self.task2 = false;//Set task2 so that the reset button knows to ignore input
 									conceal = legend.append('rect')
 										.attr('x', sep1+4)
 										.attr('y', 5)
@@ -2151,12 +2183,20 @@
 									curQ.remove();
 									content.hideTopMessage();
 									content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
-									self.audio = new Audio('audio/Task 2.wav');
+									self.audio = new Audio('audio/Task 22.wav');
 									self.audio.play();
+									but_text.remove();
+									but_text = button.append('text')
+											.style('font-size', '16px')
+											.attr('fill', 'black')
+											.attr('x', sep2 +  width*0.33 / 4 - 35 +b_offset)
+											.attr('y', height/2 - 8  )
+											.text('Start');
+									self.answerVerified = true;
+									self.certaintyPanel = true; //Have the code ignore the certainty section
 									return;
 								}
-								if(self.task2 == false)
-									self.task2 = true;//Tell reset button that coast is clear
+								
 								content.parent.newQuestion();
 								var qid = content.parent.getQid();
 								if(qid === 215){
@@ -2172,41 +2212,49 @@
 									content.hideGraph('Please inform the experimenter so that you may begin the experiment', 'END OF TRAINING');
 									button.remove();
 									back_button.remove();
-									self.audio = new Audio('audio/End.wav');
+									self.audio = new Audio('audio/End2.wav');
 									self.audio.play();
 									return;
 								}
 								curQ.remove();
 
 								curQ = displayPractice(qid - 202);
-								but_color = 'red';
-								but_rect.attr('stroke', but_color);
 								pre_state = false;
-								but_state=false;
+								but_state=true;
 								content.hideTopMessage();
 								refreshGraphs();
 								//Play the correct audio
 								if(qid === 204){//It's the first vismirrors
-									self.audio = new Audio('audio/VisMirrors.wav');
+									self.audio = new Audio('audio/VisMirrors2.wav');
 									self.audio.play();
 								}
 								else if(qid === 205){//It's the first vismirrors
-									self.audio = new Audio('audio/VisGumbo.wav');
+									self.audio = new Audio('audio/VisGumbo2.wav');
 									self.audio.play();
 								}
 								else if(qid === 206){
-									self.audio = new Audio('audio/3 Trials.wav');
+									self.audio = new Audio('audio/3 Trials2.wav');
 									self.audio.play();
 								}else if(qid === 207){
-									self.audio = new Audio('audio/3 Sizes.wav');
+									self.audio = new Audio('audio/3 Sizes2.wav');
 									self.audio.play();
 								}
 							}
-							else {
-								content.showTopMessage("Check Corrections");
+							else {//The answer is incorrect
+							var correct = ['Nodes: 8, 11 and 22',
+											'Nodes: 156, 157 and 160',
+											'Nodes: 47, 53, 62 and 71',
+											'Nodes: 10, 27 and 44',
+											'Nodes: 9, 29, 32 and 44',
+											'Nodes: 42, 53, 58 and 68',
+											'3 nodes', '0 nodes', '3 nodes', '2 nodes', '4 nodes', '1 node'
+											 ];
+								content.hideTopMessage();
+								content.showTopMessage("Check Corrections",correct[qid-203]);
+								content.revealGraph();
 								if(qType === 103){
 									qi--;
-									content.revealGraph();
+									
 									content.parent.giveAnswer(); 
 								}
 								else{
@@ -2273,9 +2321,9 @@
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
-											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+											.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
 											.attr('y', height/2 - 8  )
-											.text('Next');
+											.text('Check Answer');
 								}
 								else
 								{
@@ -2294,7 +2342,7 @@
 						else
 						{
 						// Load a new question
-						but_state = false;
+						but_state = true;
 						pre_state = false;
 						if(qType === 102 || qType === 2 || qType === 104 || qType === 4){
 		  					content.parent.setEndT();
