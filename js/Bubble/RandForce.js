@@ -416,6 +416,7 @@
                         //this.practiceCounter++;
                         console.log('Practice count: '+ this.pCount);
                         console.log('Practice ID: '+ this.qID);
+						
                          this.pCount++;
                     }
 

@@ -1,0 +1,3 @@
+Question 0 loaded in at 1486759064757
+User correctly answered question 0 at 1486759067159
+User submitted certainty of s1 for question 0 at 1486759069583

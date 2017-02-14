@@ -1,0 +1,36 @@
+0: Question loaded in at 1487094597411
+0: User correctly answered question at 1487094598416
+0: User submitted certainty of s4 at 1487094600865
+1: Question loaded in at 1487094600870
+1: User correctly answered question at 1487094601821
+1: User submitted certainty of s2 at 1487094604442
+2: Question loaded in at 1487094604445
+2: User correctly answered question at 1487094605883
+2: User submitted certainty of s4 at 1487094608964
+3: Question loaded in at 1487094608967
+3: User correctly answered question at 1487094611968
+3: User submitted certainty of s6 at 1487094615697
+4: Question loaded in at 1487094615700
+4: User correctly answered question at 1487094616919
+4: User submitted certainty of s2 at 1487094620169
+5: Question loaded in at 1487094620172
+5: User correctly answered question at 1487094621785
+5: User submitted certainty of s6 at 1487094626847
+6: Question loaded in at 1487094629451
+6: User correctly answered question at 1487094661358
+6: User submitted certainty of s5 at 1487094666173
+7: Question loaded in at 1487094666177
+7: User correctly answered question at 1487094688720
+7: User submitted certainty of s4 at 1487094692061
+8: Question loaded in at 1487094692064
+8: User correctly answered question at 1487094743089
+8: User submitted certainty of s2 at 1487094747038
+9: Question loaded in at 1487094747041
+9: User correctly answered question at 1487094784649
+9: User submitted certainty of s5 at 1487094812584
+10: Question loaded in at 1487094812587
+10: User correctly answered question at 1487094828580
+10: User submitted certainty of s5 at 1487094831540
+11: Question loaded in at 1487094831543
+11: User correctly answered question at 1487094842118
+11: User submitted certainty of s6 at 1487094848483

@@ -4039,6 +4039,9 @@
 			 		self.delLinkAtGraph = [];
 
 					console.log('Reload request received in content, qi ='+ qi);
+					$.post('./php/track_stages.php',
+						{"id": self.parent.userID, "log": ""+(qi-203)+": Question loaded in at "+Date.now()+"\n"}
+					);
 			 		// initialize self.adjacency
 					for(var i=0; i < self.N; i++)
 						self.adjacency[i] = [];

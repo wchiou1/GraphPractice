@@ -1,0 +1,28 @@
+Question 0 loaded in at 1486759635326
+User correctly answered question 0 at 1486759637297
+User submitted certainty of s5 for question 0 at 1486759639575
+Question 1 loaded in at 1486759639580
+User correctly answered question 1 at 1486759639917
+User submitted certainty of s4 for question 1 at 1486759642414
+Question 2 loaded in at 1486759642418
+User correctly answered question 2 at 1486759642781
+User submitted certainty of s4 for question 2 at 1486759645318
+Question 3 loaded in at 1486759645321
+User correctly answered question 3 at 1486759645671
+User submitted certainty of s4 for question 3 at 1486759647362
+Question 4 loaded in at 1486759647365
+User correctly answered question 4 at 1486759647838
+User submitted certainty of s4 for question 4 at 1486759651290
+Question 5 loaded in at 1486759651294
+User correctly answered question 5 at 1486759651643
+User submitted certainty of s4 for question 5 at 1486759654523
+Question 6 loaded in at 1486759654687
+User correctly answered question 6 at 1486759657280
+User submitted certainty of s3 for question 6 at 1486759659065
+Question 7 loaded in at 1486759659070
+User correctly answered question 7 at 1486759692019
+User submitted certainty of s7 for question 7 at 1486759694088
+Question 8 loaded in at 1486759694094
+User correctly answered question 8 at 1486759748717
+User submitted certainty of s5 for question 8 at 1486759753098
+Question 9 loaded in at 1486759753102

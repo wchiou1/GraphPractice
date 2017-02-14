@@ -1913,6 +1913,10 @@
 		back_button.on("click", function(){
 			if(typeof self.task2 !== "undefined" && self.task2 == false)
 				return;
+			var qid = content.parent.getQid();
+			$.post('./php/track_stages.php',
+					{"id": content.parent.userID, "log": ""+(qid-203)+": User reset question at "+Date.now()+"\n"}
+				);
 			content.parent.answerReady = false;
 			self.answerVerified = false;
 			self.certaintyPanel = false;
@@ -2082,36 +2086,34 @@
 				    else {
 				    	// load a new practice question
 				    	if(time_limited)
-							{
-								content.override_timeout = true;
-								content.parent.setEndT();
-								conceal.remove();
-								time_limited = false;
-								but_color = 'red';
-								but_state = false;
-								but_rect.attr('stroke', but_color);
-								but_text.remove();
-								if(qi < 214)
-								{
+						{
+							content.override_timeout = true;
+							content.parent.setEndT();
+							conceal.remove();
+							time_limited = false;
+							but_color = 'red';
+							but_state = false;
+							but_rect.attr('stroke', but_color);
+							but_text.remove();
+							if(qi < 214){
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
 											.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Check Answer');
-								}
-								else
-								{
+							}
+							else{
 								but_text = button.append('text')
 											.style('font-size', '16px')
 											.attr('fill', 'black')
 											.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 											.attr('y', height/2 - 8  )
 											.text('Finish');
-								}
-
-								content.hideGraph('Please select answer');
 							}
+
+							content.hideGraph('Please select answer');
+						}
 						else {
 							if(qType === 102 || qType === 2 || qType === 104 || qType === 4)
 								answerToRecord = content.parent.getNodeSelection();
@@ -2119,14 +2121,16 @@
 								answerToRecord = self.curSelection;
 							
 							var answer = content.reportAnswer(qid,answerToRecord);
-
-							if(answer)
-							{
+							
+							if(answer){
 								
 								
 								if(self.task2 == false)
 									self.task2 = true;//Tell reset button that coast is clear
 								if(!self.answerVerified){
+									$.post('./php/track_stages.php',
+											{"id": content.parent.userID, "log": ""+(qid-203)+": User correctly answered question at "+Date.now()+"\n"}
+										);
 									self.answerVerified = true;
 									content.hideTopMessage();
 									content.showTopMessage("Answer is correct!");
@@ -2161,6 +2165,7 @@
 										var s = scaleboxes[k];
 										s.setEnabled();
 									}
+									d3.selectAll(".textbox_base").remove();
 									return;
 								}
 								self.certaintyPanel = false;
@@ -2170,8 +2175,10 @@
 											certainty: self.curCertainty
 											};
 								content.parent.recordAnswer(toRecord);
-								self.certaintyPanel = false;
 								if(qid === 208 && typeof self.task2 === "undefined"){//We are starting task 2!
+									$.post('./php/track_stages.php',
+											{"id": content.parent.userID, "log": ""+(qid-203)+": User submitted certainty of "+self.curCertainty+" at "+Date.now()+"\n"}
+										);
 									self.task2 = false;//Set task2 so that the reset button knows to ignore input
 									conceal = legend.append('rect')
 										.attr('x', sep1+4)
@@ -2195,6 +2202,11 @@
 									self.answerVerified = true;
 									self.certaintyPanel = true; //Have the code ignore the certainty section
 									return;
+								}
+								if(qid !== 208){
+									$.post('./php/track_stages.php',
+										{"id": content.parent.userID, "log": ""+(qid-203)+": User submitted certainty of "+self.curCertainty+" at "+Date.now()+"\n"}
+									);
 								}
 								
 								content.parent.newQuestion();
