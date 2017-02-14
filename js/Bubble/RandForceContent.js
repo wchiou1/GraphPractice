@@ -1223,7 +1223,7 @@
 				  var elapsed = Date.now() - start;
 				   if(elapsed > threshold && !self.override_timeout)
 				   {
-				    var hider= self.svg.append('rect')
+				    var hider = self.svg.append('rect')
 				  		.attr('x', 0)
 						.attr('y', 0)
 						.attr('width', self.w)
@@ -1231,8 +1231,8 @@
 						.attr('stroke-width', 1)
 						.attr('stroke', 'white')
 						.attr('fill', 'white');
-
-					self.svg.append('text')
+					self.hiders.push(hider);
+					var itext = self.svg.append('text')
 							.style('font-size', '24px')
 							.style('font-weight', 'bold')
 							.style('font-decoration', 'underline')
@@ -1241,7 +1241,7 @@
 							.attr('y', self.h/2 - 20)
 							.attr('dominant-baseline', 'middle')
 							.text('Please select answer');
-
+					self.hiders.push(itext);
 					self.parent.answerReady = true;
 					self.updateLegend(true);
 			   		self.updateSvgPosition();
@@ -1264,7 +1264,7 @@
 			hideTopMessage : function(){
 				d3.selectAll(".topmessage").remove();
 			},
-			showTopMessage: function(message){
+			showTopMessage: function(message, secondMessage){
 				var self = this;
 				self.svg.append('rect')
 					.attr("class", "topmessage")
@@ -1281,10 +1281,67 @@
 					.style('font-weight', 'bold')
 					.style('font-decoration', 'underline')
 					.attr('fill', 'black')
-					.attr('x', self.w/2 - message.length*6)
+					.attr('x', self.w/2 - message.length*5.5)
 					.attr('y', 20)
 					.attr('dominant-baseline', 'middle')
 					.text(message);
+				if(secondMessage){
+					self.svg.append('rect')
+						.attr("class", "topmessage")
+						.attr('x', self.w/2 - secondMessage.length*7.5)
+						.attr('y', 40)
+						.attr('width', secondMessage.length*16)
+						.attr('height', 40)
+						.attr('stroke-width', 1)
+						.attr('stroke', 'white')
+						.attr('fill', '#ddd');
+					self.svg.append('text')
+						.attr("class", "topmessage")
+						.style('font-size', '24px')
+						.style('font-weight', 'bold')
+						.style('font-decoration', 'underline')
+						.attr('fill', 'black')
+						.attr('x', self.w/2 - secondMessage.length*5.5)
+						.attr('y', 60)
+						.attr('dominant-baseline', 'middle')
+						.text(secondMessage);
+				}
+			},
+			showImage: function(url) {
+			  		 var self = this;
+					var hider= self.svg.append('rect')
+						.attr('x', 0)
+						.attr('y', 0)
+						.attr('width', self.w)
+						.attr('height', self.h)
+						.attr('stroke-width', 1)
+						.attr('stroke', 'white')
+						.attr('fill', 'white');
+					self.hiders.push(hider);
+					self.svg.append('image')
+						.attr("xlink:href", url)
+						.attr("x", self.w/10)
+						.attr("y", self.h/10)
+						.attr("width", 4*self.w/5)
+						.attr("height", 4*self.h/5);
+					/*self.svg.append('text')
+						.style('font-size', '24px')
+						.style('font-weight', 'bold')
+						.style('font-decoration', 'underline')
+						.attr('fill', 'black')
+						.attr('x', self.w/4 - label1.length*5.5)
+						.attr('y', 2*self.h/3)
+						.attr('dominant-baseline', 'middle')
+						.text(label1);
+					self.svg.append('text')
+						.style('font-size', '24px')
+						.style('font-weight', 'bold')
+						.style('font-decoration', 'underline')
+						.attr('fill', 'black')
+						.attr('x', 3*self.w/4 - label2.length*5.5)
+						.attr('y', 2*self.h/3)
+						.attr('dominant-baseline', 'middle')
+						.text(label2);*/
 			},
 			hideGraph: function(text, task) {
 			  		 var self = this;
@@ -3982,6 +4039,9 @@
 			 		self.delLinkAtGraph = [];
 
 					console.log('Reload request received in content, qi ='+ qi);
+					$.post('./php/track_stages.php',
+						{"id": self.parent.userID, "log": ""+(qi-203)+": Question loaded in at "+Date.now()+"\n"}
+					);
 			 		// initialize self.adjacency
 					for(var i=0; i < self.N; i++)
 						self.adjacency[i] = [];

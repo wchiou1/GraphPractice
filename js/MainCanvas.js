@@ -31,6 +31,7 @@ $P.MainCanvas = $P.defineClass(
 		this.html.addEventListener('mousewheel', mousewheel, false);
 		this.html.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
 		function mousewheel() {
+			console.log("Chickens");
 			/*
 			var delta = 0;
 			if (event.wheelDelta) { // WebKit / Opera / Explorer 9

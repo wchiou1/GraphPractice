@@ -1,0 +1,14 @@
+User correctly answered question 0 at 1486759310990
+User submitted certainty of s4 for question 0 at 1486759313238
+User correctly answered question 1 at 1486759313852
+User submitted certainty of s4 for question 1 at 1486759315967
+User correctly answered question 2 at 1486759316292
+User submitted certainty of s4 for question 2 at 1486759317797
+User correctly answered question 3 at 1486759318110
+User submitted certainty of s4 for question 3 at 1486759319841
+User correctly answered question 4 at 1486759320150
+User submitted certainty of s4 for question 4 at 1486759321674
+User correctly answered question 5 at 1486759321972
+User submitted certainty of s5 for question 5 at 1486759323753
+User correctly answered question 6 at 1486759326639
+User submitted certainty of s5 for question 6 at 1486759328627
