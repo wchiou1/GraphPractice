@@ -14,6 +14,7 @@
 			self.answerVerified = false;
 			self.task2;
 			self.introGraphs;
+			self.introSubGraphs;
 			self.started;
 			self.audio;
 			self.hiddenNodeTypes = {};
@@ -1121,8 +1122,8 @@
 		var but_state = true;
 		var but_color = 'red';
 		var but_rect;
-		var bbut_state = false;
-		var bbut_color = 'red';
+		var bbut_state = true;
+		var bbut_color = 'green';
 		var bbut_rect;
 		
 
@@ -1542,7 +1543,7 @@
 				but_state = true;
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
-				bbut_state = false;
+				bbut_state = true;
 				bbut_color = 'green';
 				bbut_rect.attr('stroke', bbut_color);
 			}
@@ -1613,7 +1614,7 @@
 	 {
 		 if( qType === 102 || qType === 104 || qType === 101 )
 			{
-			/*
+			/*asd
 			cbutton = legend.append('g')
 					.attr('id', 'cbutton');
 
@@ -1708,7 +1709,7 @@
 
 		else if((qType === 3 || qType === 103))
 		{
-			listBox = textbox('g0', x+30, y+20);
+			
 			/*
 			radiobox('g1', x, y);
 
@@ -1790,21 +1791,63 @@
 		}
 		//asd
 		}
-
-
+		var countdown = legend.append('text')
+						.style('font-size', '28px')
+						.attr('x', sep1+400)
+						.attr('y', 50)
+						.attr('fill', 'black')
+						.attr('dominant-baseline', 'middle')
+						.text('');
 			if(time_limited)
 			{
 				but_state = true;
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
-				conceal = legend.append('rect')
+				/*conceal = legend.append('rect')
 					.attr('x', sep1+4)
 					.attr('y', 5)
 					.attr('width', sep2 - sep1 - 15)
 					.attr('height', height - 30)
 					.attr('stroke', 'white')
-					.attr('fill','white');
+					.attr('fill','white');*/
+				countdown.text(Math.ceil(content.getThreshold()/1000));
+				var x = setInterval(function() {
+					
+					var remaining = content.getRemaining();
+					
+					countdown.text(Math.ceil(remaining/1000));
+					if (remaining < 0 || time_limited == false) {
+						//Create the listBox only AFTER the countdown
+						listBox = textbox('g0', sep1+60, 50);
+						content.override_timeout = true;
+						content.parent.setEndT();
+						countdown.remove();
+						time_limited = false;
+						but_color = 'red';
+						but_state = false;
+						but_rect.attr('stroke', but_color);
+						but_text.remove();
+						if(qi < 214){
+							but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Check Answer');
+						}
+						else{
+							but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Finish');
+						}
 
+						content.hideGraph('Please select answer');
+						clearInterval(x);
+					}
+				}, 100);
 			}
 			if(qType === 200)
 			   {
@@ -1819,8 +1862,12 @@
 						.attr('fill','white');
 			     	}
 			    else{
-					if(typeof self.started === "undefined")
+					if(typeof self.started === "undefined"){
 						content.hideGraph('Click \'Start\' when ready', 'Training');
+						bbut_state = false;
+						bbut_color = 'red';
+						bbut_rect.attr('stroke', bbut_color);
+					}
 					else
 						content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 				}
@@ -1911,6 +1958,8 @@
 			bbut_rect.attr('fill', '#ddd');
 		});
 		back_button.on("click", function(){
+			if(bbut_state === false)
+				return;
 			if(typeof self.task2 !== "undefined" && self.task2 == false)
 				return;
 			var qid = content.parent.getQid();
@@ -1931,8 +1980,6 @@
 					};
 			console.log('View will now request reload');
 			content.parent.receiveEvent(event);
-			
-			
 		});
 		button.on("mouseover", function(){
 			but_rect.attr('fill', '#aaa');
@@ -1949,6 +1996,9 @@
 				//Play the intro graphs audio
 				self.audio = new Audio('audio/Let us start3.wav');
 				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
 				but_text.remove();
 				but_text = button.append('text')
 							.style('font-size', '16px')
@@ -1956,13 +2006,34 @@
 							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 							.attr('y', height/2 - 8  )
 							.text('Next');
-				content.showImage("image/labeled graphs.png");
+				content.showImage("image/Complete Graph.png");
+				return;
+			}
+			if(typeof self.introSubgraphs === "undefined"){
+				self.introSubgraphs = true;
+				//Play the intro subgraphs audio
+				self.audio = new Audio('audio/Subgraphs.wav');
+				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
+				but_text.remove();
+				but_text = button.append('text')
+							.style('font-size', '16px')
+							.attr('fill', 'black')
+							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+							.attr('y', height/2 - 8  )
+							.text('Next');
+				content.showImage("image/Subgraphs Complete.png");
 				return;
 			}
 			if(typeof self.started === "undefined"){
 				self.started = true;
 				self.audio = new Audio('audio/Task 13.wav');
 				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
 				but_text.remove();
 				but_text = button.append('text')
 							.style('font-size', '16px')
@@ -1973,6 +2044,9 @@
 				content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 				return;
 			}
+			bbut_state = true;
+			bbut_color = 'green';
+			bbut_rect.attr('stroke', bbut_color);
 			
 			var qid = content.parent.getQid();
 			if(qid >= 200  && qid <= 202) // 203
@@ -2089,7 +2163,7 @@
 						{
 							content.override_timeout = true;
 							content.parent.setEndT();
-							conceal.remove();
+							countdown.remove();
 							time_limited = false;
 							but_color = 'red';
 							but_state = false;
@@ -2180,6 +2254,9 @@
 											{"id": content.parent.userID, "log": ""+(qid-203)+": User submitted certainty of "+self.curCertainty+" at "+Date.now()+"\n"}
 										);
 									self.task2 = false;//Set task2 so that the reset button knows to ignore input
+									bbut_state = false;
+									bbut_color = 'red';
+									bbut_rect.attr('stroke', bbut_color);
 									conceal = legend.append('rect')
 										.attr('x', sep1+4)
 										.attr('y', 5)
@@ -2322,7 +2399,6 @@
 							{
 								content.override_timeout = true;
 								content.parent.setEndT();
-								conceal.remove();
 								time_limited = false;
 								but_color = 'red';
 								but_state = false;
