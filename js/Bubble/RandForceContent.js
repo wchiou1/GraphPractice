@@ -706,28 +706,28 @@
         		self.fdelAtGraph = [];
 				var filename;
 
-				  filename = parentFolder + id +'/graph-locs.txt';
-				 $P.getJSON('./php/load_graph.php',
-			 			function(jsonData) {
-							self.fLocations = jsonData;
-							possible = genPool(alphabet, self.fLocations.length);
-							for(var i=0; i < jsonData.length; i++)
-							 {
-							 	var newLoc = possible[i];
-								mapLocations[self.fLocations[i].id] = newLoc;
-					
-							 	self.fLocations[i].id = anonymize?  newLoc : jsonData[i].id;
-							 	self.fLocations[i].x = parseFloat(jsonData[i].x);
-							 	self.fLocations[i].y = parseFloat(jsonData[i].y);
-							 }
-			 			},
-			 			{
-			 				type: 'GET',
-						    data: {
-									index: id,
-									file: filename
-								}
-			 			});
+				filename = parentFolder + id +'/graph-locs.txt';
+				$P.getJSON('./php/load_graph.php',
+					function(jsonData) {
+						self.fLocations = jsonData;
+						possible = genPool(alphabet, self.fLocations.length);
+						for(var i=0; i < jsonData.length; i++)
+						 {
+							var newLoc = possible[i];
+							mapLocations[self.fLocations[i].id] = newLoc;
+				
+							self.fLocations[i].id = anonymize?  newLoc : jsonData[i].id;
+							self.fLocations[i].x = parseFloat(jsonData[i].x);
+							self.fLocations[i].y = parseFloat(jsonData[i].y);
+						 }
+					},
+					{
+						type: 'GET',
+						data: {
+								index: id,
+								file: filename
+							}
+					});
 
 				  filename = parentFolder + id +'/graph-nodes.txt';
 				  $P.getJSON('./php/load_graph.php',
@@ -865,6 +865,7 @@
 									file: filename
 								}
 			 				});
+				console.log('File ID: '+ id);
 				console.log('Number of nodes: '+ self.fNodes.length);
 				console.log('Number of links: '+ self.fLinks.length);
 				console.log('Number of compartments: '+ self.fLocations.length);
@@ -1187,7 +1188,14 @@
 				});
 				return maxT;
 			},
-
+			getRemaining: function(){
+					var start = this.parent.getStartT();
+					var elapsed = Date.now() - start;
+					return 50000-elapsed;
+			},
+			getThreshold(){
+				return 50000;
+			},
 
 			onGraphsChanged: function(){
 			   var self = this;
@@ -1215,7 +1223,6 @@
 
 				  var qi = self.parent.getQid();
 				  var threshold =  50000; // (qi%3 === 0)? 20000  : (qi%3 === 1)? 50000  : 80000 ;
-
 				function hideGraph() {
 
 
@@ -1243,7 +1250,7 @@
 							.text('Please select answer');
 					self.hiders.push(itext);
 					self.parent.answerReady = true;
-					self.updateLegend(true);
+					//self.updateLegend(true);
 			   		self.updateSvgPosition();
 			   		self.parent.setEndT();
 			   		self.hiders.push(hider);
@@ -1253,8 +1260,8 @@
 				}
 
 				var qType = self.parent.getQtype();
-				if(qType === 103 || qType === 3)
-			   		setTimeout(hideGraph, threshold);
+				//if(qType === 103 || qType === 3)//Should I disable this?
+			   	//	setTimeout(hideGraph, threshold);
 			},
 			onPositionChanged: function(dx, dy, dw, dh) {
 				$P.HtmlObject.prototype.onPositionChanged.call(this, dx, dy, dw, dh);

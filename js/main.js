@@ -55,8 +55,8 @@
 		render();
 		var bubble, state, objects, qbubble;
 		var result, event;
-		var bwidth = canvas.width-40;
-		var bheight = 1100; // canvas.height- 80;//1100;
+		var bwidth = canvas.width-30;
+		var bheight = canvas.height-30;
 						event = {
 							name: 'addGraph',
 							x: mousePosX, y: mousePosY,

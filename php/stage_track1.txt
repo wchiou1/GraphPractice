@@ -1,7 +1,0 @@
-0: Question loaded in at 1487784089516
-0: User correctly answered question at 1487784123267
-0: User submitted certainty of s7 at 1487784126137
-1: Question loaded in at 1487784126138
-1: User correctly answered question at 1487784126474
-1: User submitted certainty of s7 at 1487784129011
-2: Question loaded in at 1487784129012

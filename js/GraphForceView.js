@@ -13,7 +13,9 @@
 			self.certaintyPanel = false;
 			self.answerVerified = false;
 			self.task2;
+			self.introCertainty;
 			self.introGraphs;
+			self.introSubGraphs;
 			self.started;
 			self.audio;
 			self.hiddenNodeTypes = {};
@@ -1121,8 +1123,8 @@
 		var but_state = true;
 		var but_color = 'red';
 		var but_rect;
-		var bbut_state = false;
-		var bbut_color = 'red';
+		var bbut_state = true;
+		var bbut_color = 'green';
 		var bbut_rect;
 		
 
@@ -1542,7 +1544,7 @@
 				but_state = true;
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
-				bbut_state = false;
+				bbut_state = true;
 				bbut_color = 'green';
 				bbut_rect.attr('stroke', bbut_color);
 			}
@@ -1613,7 +1615,7 @@
 	 {
 		 if( qType === 102 || qType === 104 || qType === 101 )
 			{
-			/*
+			/*asd
 			cbutton = legend.append('g')
 					.attr('id', 'cbutton');
 
@@ -1695,6 +1697,7 @@
 			//radiobox('g2', x, y);
 
 			legend.append('text')
+				.attr("class", "shiftclick")
 				.style('font-size', '14px')
 				.attr('x', textX - 30)
 				.attr('y', y )
@@ -1708,7 +1711,7 @@
 
 		else if((qType === 3 || qType === 103))
 		{
-			listBox = textbox('g0', x+30, y+20);
+			
 			/*
 			radiobox('g1', x, y);
 
@@ -1788,23 +1791,69 @@
 			.text('Remains the same');
 
 		}
-		//asd
 		}
-
-
-			if(time_limited)
+			console.log("Countdown:"+content.graphs.length);
+			var countdown = legend.append('text')
+				.attr("class", "countdown")
+				.style('font-size', '56px')
+				.attr('x', sep1+(sep2-sep1)/2 - 30)
+				.attr('y', 50)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text('');
+			if(time_limited && content.graphs.length===2)
 			{
 				but_state = true;
 				but_color = 'green';
 				but_rect.attr('stroke', but_color);
-				conceal = legend.append('rect')
+				/*conceal = legend.append('rect')
 					.attr('x', sep1+4)
 					.attr('y', 5)
 					.attr('width', sep2 - sep1 - 15)
 					.attr('height', height - 30)
 					.attr('stroke', 'white')
-					.attr('fill','white');
+					.attr('fill','white');*/
+				countdown.text(Math.ceil(content.getThreshold()/1000));
+				var x = setInterval(function() {
+					
+					var remaining = content.getRemaining();
+					
+					countdown.text(Math.ceil(remaining/1000));
+					console.log("Time DEBUG:"+remaining+"|"+time_limited);
+					if(remaining < 10000)
+						countdown.attr('fill','red');
+					if (remaining < 0 || time_limited == false) {
+						//Create the listBox only AFTER the countdown
+						listBox = textbox('g0', sep1+60, 50);
+						content.override_timeout = true;
+						content.parent.setEndT();
+						countdown.remove();
+						time_limited = false;
+						but_color = 'red';
+						but_state = false;
+						but_rect.attr('stroke', but_color);
+						but_text.remove();
+						if(qi < 214){
+							but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 60 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Check Answer');
+						}
+						else{
+							but_text = button.append('text')
+										.style('font-size', '16px')
+										.attr('fill', 'black')
+										.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+										.attr('y', height/2 - 8  )
+										.text('Finish');
+						}
 
+						content.hideGraph('Please select answer');
+						clearInterval(x);
+					}
+				}, 100);
 			}
 			if(qType === 200)
 			   {
@@ -1819,8 +1868,12 @@
 						.attr('fill','white');
 			     	}
 			    else{
-					if(typeof self.started === "undefined")
+					if(typeof self.started === "undefined"){
 						content.hideGraph('Click \'Start\' when ready', 'Training');
+						bbut_state = false;
+						bbut_color = 'red';
+						bbut_rect.attr('stroke', bbut_color);
+					}
 					else
 						content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 				}
@@ -1837,11 +1890,11 @@
 		var titleH = 150;
 		var exp_ready = false;
 		var displayScaleBoxes = function(){
-			x = sep1 + width* 0.15;
+			x = sep1 + (sep2-sep1)/2 - 100;
 			y = 20;
 			legend.append('text')
-				.style('font-size', '14px')
-				.attr('x', x + 65)
+				.style('font-size', '20px')
+				.attr('x', x + 60)
 				.attr('y', y)
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
@@ -1849,7 +1902,7 @@
 
 			y += 20;
 			legend.append('text')
-				.style('font-size', '11px')
+				.style('font-size', '14px')
 				.attr('x', x)
 				.attr('y', y)
 				.attr('fill', 'black')
@@ -1858,8 +1911,8 @@
 
 
 			legend.append('text')
-				.style('font-size', '11px')
-				.attr('x', x + 180)
+				.style('font-size', '14px')
+				.attr('x', x + 175)
 				.attr('y', y)
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
@@ -1879,7 +1932,7 @@
 				x += 30;
 			}
 			y += 25;
-			x = sep1 + width * 0.15 + 15;
+			x = sep1 + (sep2-sep1)/2 - 85;
 			scalebox('s1', x, y);
 			x += 30;
 			scalebox('s2', x, y);
@@ -1911,6 +1964,8 @@
 			bbut_rect.attr('fill', '#ddd');
 		});
 		back_button.on("click", function(){
+			if(bbut_state === false)
+				return;
 			if(typeof self.task2 !== "undefined" && self.task2 == false)
 				return;
 			var qid = content.parent.getQid();
@@ -1931,8 +1986,6 @@
 					};
 			console.log('View will now request reload');
 			content.parent.receiveEvent(event);
-			
-			
 		});
 		button.on("mouseover", function(){
 			but_rect.attr('fill', '#aaa');
@@ -1947,8 +2000,11 @@
 			if(typeof self.introGraphs === "undefined"){
 				self.introGraphs = true;
 				//Play the intro graphs audio
-				self.audio = new Audio('audio/Let us start3.wav');
+				self.audio = new Audio('audio/Welcome.wav');
 				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
 				but_text.remove();
 				but_text = button.append('text')
 							.style('font-size', '16px')
@@ -1956,13 +2012,34 @@
 							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 							.attr('y', height/2 - 8  )
 							.text('Next');
-				content.showImage("image/labeled graphs.png");
+				content.showImage("image/Complete Graph.png");
+				return;
+			}
+			if(typeof self.introSubgraphs === "undefined"){
+				self.introSubgraphs = true;
+				//Play the intro subgraphs audio
+				self.audio = new Audio('audio/Subgraphs.wav');
+				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
+				but_text.remove();
+				but_text = button.append('text')
+							.style('font-size', '16px')
+							.attr('fill', 'black')
+							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
+							.attr('y', height/2 - 8  )
+							.text('Next');
+				content.showImage("image/Subgraphs Complete Big.png");
 				return;
 			}
 			if(typeof self.started === "undefined"){
 				self.started = true;
-				self.audio = new Audio('audio/Task 13.wav');
+				self.audio = new Audio('audio/Task 15.wav');
 				self.audio.play();
+				bbut_state = false;
+				bbut_color = 'red';
+				bbut_rect.attr('stroke', bbut_color);
 				but_text.remove();
 				but_text = button.append('text')
 							.style('font-size', '16px')
@@ -1973,6 +2050,9 @@
 				content.hideGraph('Please read the instructions along with the audio', 'Task 1:  For the subgraph containing the most nodes, mark the nodes that\nare missing in one graph but not the other.');
 				return;
 			}
+			bbut_state = true;
+			bbut_color = 'green';
+			bbut_rect.attr('stroke', bbut_color);
 			
 			var qid = content.parent.getQid();
 			if(qid >= 200  && qid <= 202) // 203
@@ -2001,7 +2081,7 @@
 					but_state = true; 
 					but_color = 'green';
 					but_rect.attr('stroke', but_color);
-					self.audio = new Audio('audio/SmallMultiples3.wav');
+					self.audio = new Audio('audio/SmallMultiples4.wav');
 					self.audio.play();
 				}
 				else{//This is leftover code, never run
@@ -2089,7 +2169,7 @@
 						{
 							content.override_timeout = true;
 							content.parent.setEndT();
-							conceal.remove();
+							countdown.remove();
 							time_limited = false;
 							but_color = 'red';
 							but_state = false;
@@ -2145,8 +2225,14 @@
 									return;
 								}
 								if(!self.certaintyPanel){
+									if(typeof self.introCertainty === "undefined"){
+										self.introCertainty = true;
+										self.audio = new Audio('audio/Certainty.wav');
+										self.audio.play();
+									}
 									//We must setup the certainty panel!
 									self.certaintyPanel = true;
+									d3.selectAll(".shiftclick").remove();
 									content.hideTopMessage();
 									content.hideGraph('Please enter how certain you are of your answer',' ');
 									displayScaleBoxes();
@@ -2180,6 +2266,9 @@
 											{"id": content.parent.userID, "log": ""+(qid-203)+": User submitted certainty of "+self.curCertainty+" at "+Date.now()+"\n"}
 										);
 									self.task2 = false;//Set task2 so that the reset button knows to ignore input
+									bbut_state = false;
+									bbut_color = 'red';
+									bbut_rect.attr('stroke', bbut_color);
 									conceal = legend.append('rect')
 										.attr('x', sep1+4)
 										.attr('y', 5)
@@ -2190,7 +2279,7 @@
 									curQ.remove();
 									content.hideTopMessage();
 									content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
-									self.audio = new Audio('audio/Task 22.wav');
+									self.audio = new Audio('audio/Task 23.wav');
 									self.audio.play();
 									but_text.remove();
 									but_text = button.append('text')
@@ -2224,7 +2313,7 @@
 									content.hideGraph('Please inform the experimenter so that you may begin the experiment', 'END OF TRAINING');
 									button.remove();
 									back_button.remove();
-									self.audio = new Audio('audio/End2.wav');
+									self.audio = new Audio('audio/End3.wav');
 									self.audio.play();
 									return;
 								}
@@ -2237,18 +2326,18 @@
 								refreshGraphs();
 								//Play the correct audio
 								if(qid === 204){//It's the first vismirrors
-									self.audio = new Audio('audio/VisMirrors2.wav');
+									self.audio = new Audio('audio/VisMirrors3.wav');
 									self.audio.play();
 								}
 								else if(qid === 205){//It's the first vismirrors
-									self.audio = new Audio('audio/VisGumbo2.wav');
+									self.audio = new Audio('audio/VisGumbo3.wav');
 									self.audio.play();
 								}
 								else if(qid === 206){
-									self.audio = new Audio('audio/3 Trials2.wav');
+									self.audio = new Audio('audio/3 Trials3.wav');
 									self.audio.play();
 								}else if(qid === 207){
-									self.audio = new Audio('audio/3 Sizes2.wav');
+									self.audio = new Audio('audio/3 Sizes3.wav');
 									self.audio.play();
 								}
 							}
@@ -2322,7 +2411,6 @@
 							{
 								content.override_timeout = true;
 								content.parent.setEndT();
-								conceal.remove();
 								time_limited = false;
 								but_color = 'red';
 								but_state = false;
