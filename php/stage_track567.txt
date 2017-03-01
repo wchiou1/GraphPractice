@@ -1,0 +1,19 @@
+0: Question loaded in at 1488400331408
+0: User correctly answered question at 1488400333269
+0: User submitted certainty of s7 at 1488400335588
+1: Question loaded in at 1488400335593
+1: User correctly answered question at 1488400335881
+1: User submitted certainty of s7 at 1488400338229
+2: Question loaded in at 1488400338233
+2: User correctly answered question at 1488400338519
+2: User submitted certainty of s7 at 1488400341051
+3: Question loaded in at 1488400341057
+3: User correctly answered question at 1488400341327
+3: User submitted certainty of s7 at 1488400343374
+4: Question loaded in at 1488400343380
+4: User correctly answered question at 1488400343642
+4: User submitted certainty of s7 at 1488400345773
+5: Question loaded in at 1488400345778
+5: User correctly answered question at 1488400346983
+5: User submitted certainty of s7 at 1488400349645
+6: Question loaded in at 1488400350221

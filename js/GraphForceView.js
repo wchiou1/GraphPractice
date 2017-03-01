@@ -13,6 +13,7 @@
 			self.certaintyPanel = false;
 			self.answerVerified = false;
 			self.task2;
+			self.introCertainty;
 			self.introGraphs;
 			self.introSubGraphs;
 			self.started;
@@ -1696,6 +1697,7 @@
 			//radiobox('g2', x, y);
 
 			legend.append('text')
+				.attr("class", "shiftclick")
 				.style('font-size', '14px')
 				.attr('x', textX - 30)
 				.attr('y', y )
@@ -1789,16 +1791,17 @@
 			.text('Remains the same');
 
 		}
-		//asd
 		}
-		var countdown = legend.append('text')
-						.style('font-size', '28px')
-						.attr('x', sep1+400)
-						.attr('y', 50)
-						.attr('fill', 'black')
-						.attr('dominant-baseline', 'middle')
-						.text('');
-			if(time_limited)
+			console.log("Countdown:"+content.graphs.length);
+			var countdown = legend.append('text')
+				.attr("class", "countdown")
+				.style('font-size', '56px')
+				.attr('x', sep1+(sep2-sep1)/2 - 30)
+				.attr('y', 50)
+				.attr('fill', 'black')
+				.attr('dominant-baseline', 'middle')
+				.text('');
+			if(time_limited && content.graphs.length===2)
 			{
 				but_state = true;
 				but_color = 'green';
@@ -1816,6 +1819,9 @@
 					var remaining = content.getRemaining();
 					
 					countdown.text(Math.ceil(remaining/1000));
+					console.log("Time DEBUG:"+remaining+"|"+time_limited);
+					if(remaining < 10000)
+						countdown.attr('fill','red');
 					if (remaining < 0 || time_limited == false) {
 						//Create the listBox only AFTER the countdown
 						listBox = textbox('g0', sep1+60, 50);
@@ -1884,11 +1890,11 @@
 		var titleH = 150;
 		var exp_ready = false;
 		var displayScaleBoxes = function(){
-			x = sep1 + width* 0.15;
+			x = sep1 + (sep2-sep1)/2 - 100;
 			y = 20;
 			legend.append('text')
-				.style('font-size', '14px')
-				.attr('x', x + 65)
+				.style('font-size', '20px')
+				.attr('x', x + 60)
 				.attr('y', y)
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
@@ -1896,7 +1902,7 @@
 
 			y += 20;
 			legend.append('text')
-				.style('font-size', '11px')
+				.style('font-size', '14px')
 				.attr('x', x)
 				.attr('y', y)
 				.attr('fill', 'black')
@@ -1905,8 +1911,8 @@
 
 
 			legend.append('text')
-				.style('font-size', '11px')
-				.attr('x', x + 180)
+				.style('font-size', '14px')
+				.attr('x', x + 175)
 				.attr('y', y)
 				.attr('fill', 'black')
 				.attr('dominant-baseline', 'middle')
@@ -1926,7 +1932,7 @@
 				x += 30;
 			}
 			y += 25;
-			x = sep1 + width * 0.15 + 15;
+			x = sep1 + (sep2-sep1)/2 - 85;
 			scalebox('s1', x, y);
 			x += 30;
 			scalebox('s2', x, y);
@@ -1994,7 +2000,7 @@
 			if(typeof self.introGraphs === "undefined"){
 				self.introGraphs = true;
 				//Play the intro graphs audio
-				self.audio = new Audio('audio/Let us start3.wav');
+				self.audio = new Audio('audio/Welcome.wav');
 				self.audio.play();
 				bbut_state = false;
 				bbut_color = 'red';
@@ -2024,12 +2030,12 @@
 							.attr('x', sep2 +  width*0.33 / 4 - 35 + b_offset)
 							.attr('y', height/2 - 8  )
 							.text('Next');
-				content.showImage("image/Subgraphs Complete.png");
+				content.showImage("image/Subgraphs Complete Big.png");
 				return;
 			}
 			if(typeof self.started === "undefined"){
 				self.started = true;
-				self.audio = new Audio('audio/Task 13.wav');
+				self.audio = new Audio('audio/Task 15.wav');
 				self.audio.play();
 				bbut_state = false;
 				bbut_color = 'red';
@@ -2075,7 +2081,7 @@
 					but_state = true; 
 					but_color = 'green';
 					but_rect.attr('stroke', but_color);
-					self.audio = new Audio('audio/SmallMultiples3.wav');
+					self.audio = new Audio('audio/SmallMultiples4.wav');
 					self.audio.play();
 				}
 				else{//This is leftover code, never run
@@ -2219,8 +2225,14 @@
 									return;
 								}
 								if(!self.certaintyPanel){
+									if(typeof self.introCertainty === "undefined"){
+										self.introCertainty = true;
+										self.audio = new Audio('audio/Certainty.wav');
+										self.audio.play();
+									}
 									//We must setup the certainty panel!
 									self.certaintyPanel = true;
+									d3.selectAll(".shiftclick").remove();
 									content.hideTopMessage();
 									content.hideGraph('Please enter how certain you are of your answer',' ');
 									displayScaleBoxes();
@@ -2267,7 +2279,7 @@
 									curQ.remove();
 									content.hideTopMessage();
 									content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
-									self.audio = new Audio('audio/Task 22.wav');
+									self.audio = new Audio('audio/Task 23.wav');
 									self.audio.play();
 									but_text.remove();
 									but_text = button.append('text')
@@ -2301,7 +2313,7 @@
 									content.hideGraph('Please inform the experimenter so that you may begin the experiment', 'END OF TRAINING');
 									button.remove();
 									back_button.remove();
-									self.audio = new Audio('audio/End2.wav');
+									self.audio = new Audio('audio/End3.wav');
 									self.audio.play();
 									return;
 								}
@@ -2314,18 +2326,18 @@
 								refreshGraphs();
 								//Play the correct audio
 								if(qid === 204){//It's the first vismirrors
-									self.audio = new Audio('audio/VisMirrors2.wav');
+									self.audio = new Audio('audio/VisMirrors3.wav');
 									self.audio.play();
 								}
 								else if(qid === 205){//It's the first vismirrors
-									self.audio = new Audio('audio/VisGumbo2.wav');
+									self.audio = new Audio('audio/VisGumbo3.wav');
 									self.audio.play();
 								}
 								else if(qid === 206){
-									self.audio = new Audio('audio/3 Trials2.wav');
+									self.audio = new Audio('audio/3 Trials3.wav');
 									self.audio.play();
 								}else if(qid === 207){
-									self.audio = new Audio('audio/3 Sizes2.wav');
+									self.audio = new Audio('audio/3 Sizes3.wav');
 									self.audio.play();
 								}
 							}
