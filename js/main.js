@@ -85,7 +85,7 @@
 		function setContextMenu() {
 			var timestamp = Date.now();
 			var bwidth = canvas.width-40;
-			var bheight = canvas.height-80;
+			var bheight = canvas.height-40;
 			console.log('bwidth =' + bwidth);
 			console.log('bheight =' + bheight);
 

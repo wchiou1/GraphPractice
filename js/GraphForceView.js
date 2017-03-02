@@ -1571,7 +1571,6 @@
 					callback(id, state);}
 			});}
 
-
 		function radiobox(id, x, y) {
 			radioboxes[id] = new $P.D3.Radiobox({
 				parentSelection: legend,
