@@ -1,5 +1,0 @@
-User correctly answered question 0 at 1486755063711
-User submitted certainty of s1 for question 0 at 1486755065745
-User correctly answered question 1 at 1486755066434
-User submitted certainty of s1 for question 1 at 1486755068718
-User correctly answered question 2 at 1486755069619

@@ -1,4 +1,0 @@
-0: Question loaded in at 1488380690223
-0: User correctly answered question at 1488380691193
-0: User submitted certainty of s3 at 1488380735392
-1: Question loaded in at 1488380735396

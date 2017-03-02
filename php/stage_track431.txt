@@ -1,3 +1,0 @@
-0: Question loaded in at 1487015786856
-0: User correctly answered question at 1487015799465
-0: User reset question at 1487015833435
