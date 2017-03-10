@@ -1818,7 +1818,7 @@
 					var remaining = content.getRemaining();
 					
 					countdown.text(Math.ceil(remaining/1000));
-					console.log("Time DEBUG:"+remaining+"|"+time_limited);
+					//console.log("Time DEBUG:"+remaining+"|"+time_limited);
 					if(remaining < 10000)
 						countdown.attr('fill','red');
 					if (remaining < 0 || time_limited == false) {
@@ -1888,6 +1888,11 @@
 		var titleW = 1300;
 		var titleH = 150;
 		var exp_ready = false;
+		var resetAudio = function(){
+			if(self.audio){
+				self.audio.pause();
+			}
+		}
 		var displayScaleBoxes = function(){
 			x = sep1 + (sep2-sep1)/2 - 100;
 			y = 20;
@@ -1993,12 +1998,10 @@
 			but_rect.attr('fill', '#ddd');
 		});
 		button.on("click", function() {
-			if(self.audio){
-				self.audio.pause();
-			}
 			if(typeof self.introGraphs === "undefined"){
 				self.introGraphs = true;
 				//Play the intro graphs audio
+				resetAudio();
 				self.audio = new Audio('audio/Welcome.wav');
 				self.audio.play();
 				bbut_state = false;
@@ -2017,6 +2020,7 @@
 			if(typeof self.introSubgraphs === "undefined"){
 				self.introSubgraphs = true;
 				//Play the intro subgraphs audio
+				resetAudio();
 				self.audio = new Audio('audio/Subgraphs.wav');
 				self.audio.play();
 				bbut_state = false;
@@ -2034,7 +2038,8 @@
 			}
 			if(typeof self.started === "undefined"){
 				self.started = true;
-				self.audio = new Audio('audio/Task 15.wav');
+				resetAudio();
+				self.audio = new Audio('audio/Task 16.wav');
 				self.audio.play();
 				bbut_state = false;
 				bbut_color = 'red';
@@ -2080,7 +2085,8 @@
 					but_state = true; 
 					but_color = 'green';
 					but_rect.attr('stroke', but_color);
-					self.audio = new Audio('audio/SmallMultiples4.wav');
+					resetAudio();
+					self.audio = new Audio('audio/SmallMultiples5.wav');
 					self.audio.play();
 				}
 				else{//This is leftover code, never run
@@ -2226,7 +2232,8 @@
 								if(!self.certaintyPanel){
 									if(typeof self.introCertainty === "undefined"){
 										self.introCertainty = true;
-										self.audio = new Audio('audio/Certainty.wav');
+										resetAudio();
+										self.audio = new Audio('audio/Certainty2.wav');
 										self.audio.play();
 									}
 									//We must setup the certainty panel!
@@ -2278,6 +2285,7 @@
 									curQ.remove();
 									content.hideTopMessage();
 									content.hideGraph('Click Start when ready', 'Task 2: Estimate the number of node differences between the two graphs');
+									resetAudio();
 									self.audio = new Audio('audio/Task 23.wav');
 									self.audio.play();
 									but_text.remove();
@@ -2312,6 +2320,7 @@
 									content.hideGraph('Please inform the experimenter so that you may begin the experiment', 'END OF TRAINING');
 									button.remove();
 									back_button.remove();
+									resetAudio();
 									self.audio = new Audio('audio/End3.wav');
 									self.audio.play();
 									return;
@@ -2325,24 +2334,28 @@
 								refreshGraphs();
 								//Play the correct audio
 								if(qid === 204){//It's the first vismirrors
+									resetAudio();
 									self.audio = new Audio('audio/VisMirrors3.wav');
 									self.audio.play();
 								}
 								else if(qid === 205){//It's the first vismirrors
+									resetAudio();
 									self.audio = new Audio('audio/VisGumbo3.wav');
 									self.audio.play();
 								}
 								else if(qid === 206){
+									resetAudio();
 									self.audio = new Audio('audio/3 Trials3.wav');
 									self.audio.play();
-								}else if(qid === 207){
+								}else if(qid === 208){
+									resetAudio();
 									self.audio = new Audio('audio/3 Sizes3.wav');
 									self.audio.play();
 								}
 							}
 							else {//The answer is incorrect
 							var correct = ['Nodes: 8, 11 and 22',
-											'Nodes: 156, 157 and 160',
+											'Nodes: 86, 128 and 152',
 											'Nodes: 47, 53, 62 and 71',
 											'Nodes: 10, 27 and 44',
 											'Nodes: 9, 29, 32 and 44',

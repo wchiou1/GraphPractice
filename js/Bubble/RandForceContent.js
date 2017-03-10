@@ -1191,10 +1191,10 @@
 			getRemaining: function(){
 					var start = this.parent.getStartT();
 					var elapsed = Date.now() - start;
-					return 50000-elapsed;
+					return 35000-elapsed;
 			},
 			getThreshold(){
-				return 50000;
+				return 35000;
 			},
 
 			onGraphsChanged: function(){
