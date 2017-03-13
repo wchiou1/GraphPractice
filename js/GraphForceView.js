@@ -679,13 +679,13 @@
 					delete self.highlights[nodeID];
 			},
 			giveAnswer: function(answer)
-			{3
+			{
 				//console.log(answer);
 				var self = this;
 				
 				//Run it twice to cleanup the second graph
 				self.entities.proteins.each(function(e, eid){
-					if(self.highlights[e.layoutId]){
+					if(answer[e.layoutId] || self.highlights[e.layoutId]){
 						self.highlight(e, answer);
 					}
 				});
